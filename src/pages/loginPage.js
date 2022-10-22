@@ -13,7 +13,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
 '& .MuiTextField-root': {
       margin: theme.spacing(1),
-      width: '300px',
+      maxWidth: '310px',
+      minWidth: '130px'
     },
 '& .MuiButtonBase-root': {
       margin: theme.spacing(2),
@@ -48,7 +49,7 @@ const LoginPage = () => {
         <input type="password" id="password" placeholder="Enter Password" />
         <button type="submit">Login</button>
       </form> */}
-    <Box sx={{px:"1rem"}}>
+    <Box >
     <h1>Zaloguj się</h1>
       <form className={classes.root} onSubmit={handleSubmit}>
       <TextField
