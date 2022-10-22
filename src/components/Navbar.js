@@ -1,7 +1,6 @@
 import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
-import { MDCTopAppBar } from '@material/top-app-bar';
 
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
@@ -42,36 +41,23 @@ const Navbar = () => {
         console.log({anchorElUser});
         setAnchorElUser(null);
     };
-
-    // const onMenuItemClick = (event, index) => {
-    //     // setAnchorElUser(null);
-    //     console.log({index})
-    //     // setSelectedUserOption(index);
-    //     console.error("hello");
-    //     console.log({selectedUserOption});
-    //     if(selectedUserOption === 3){
-    //         console.log({user})
-    //         logoutUser();
-    //     }
-    //     handleCloseUserMenu();
-    //   };
+    
 
     useEffect(() => {
-        // setAnchorElUser(null);
-        // console.log({index})
-        // setSelectedUserOption(index);
-        console.error("hello");
         console.log({selectedUserOption});
         if(selectedUserOption === 3){
             console.log({user})
             logoutUser();
         }
             handleCloseUserMenu();
+            setSelectedUserOption(-1);
+
         },
         [selectedUserOption]
         );
 
     const onMenuItemClick = (event, index) => {
+        console.log({index});
         setSelectedUserOption(index);
     }
 
@@ -84,9 +70,11 @@ const Navbar = () => {
     }else{
         menu_variants = 
             <>
-            {pages.map((page) => (
+            {pages?.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page}</Typography>
+                    <Button textAlign="center" component={Link} to="/users">
+                        {page}
+                    </Button>
                 </MenuItem>
             ))}
             </>
@@ -144,7 +132,6 @@ const Navbar = () => {
             <Container maxWidth="x4">
                 <Toolbar disableGutters>
                     <DirectionsCarIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-                    {/* {menu_variants} */}
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
@@ -177,60 +164,12 @@ const Navbar = () => {
                             {menu_variants}
                         </Menu>
                     </Box>
-                    {/* <DirectionsCarIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
+
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {/* {pages.map((page) => (
-                            <Button
-                                key={page}
-                                onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
-                            >
-                                {page}
-                            </Button>
-                        ))} */}
                         {menu_variants}
                     </Box>
 
-                    {/* <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}></Box>
-
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}></Box> */}
                     {user_buttons}
-                    {/* <Button color="inherit">
-                        <Link to="/login">Login</Link>
-                    </Button>
-                    <Button color="inherit">
-                        <Link to="/register">Zarejestruj</Link>
-                    </Button>
-
-                    <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                            </IconButton>
-                        </Tooltip>
-                        <Menu
-                            sx={{ mt: '45px' }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography textAlign="center">{setting}</Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Box> */}
                 </Toolbar>
             </Container>
         </AppBar>

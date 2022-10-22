@@ -12,7 +12,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
 '& .MuiTextField-root': {
       margin: theme.spacing(1),
-      width: '300px',
+      maxWidth: '300px',
+      minWidth: '130px'
     },
 '& .MuiButtonBase-root': {
       margin: theme.spacing(2),
@@ -52,7 +53,7 @@ function Register() {
     // };
   return (
     <section>
-      <Box sx={{px:"1rem"}}>
+      <Box >
       <h1>Zarejestruj się</h1>
       {/* <form onSubmit={handleSubmit}>
         <h1>Register</h1>

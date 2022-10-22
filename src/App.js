@@ -15,6 +15,7 @@ import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import UsersPage from "./pages/UsersPage";
 
 const darkTheme = createTheme({
   palette: {
@@ -76,13 +77,14 @@ function App() {
                         <ThemeProvider theme={darkTheme}>
                              <Navbar />
                                 <CssBaseline />
-                                <Container maxWidth="sm" sx={{ mt: "2rem", px: "2rem"}}>
-                                    <Card sx={{ minWidth: 275, px: "2rem" }}>
+                                <Container maxWidth="sm" sx={{ mt: "2rem", px: "1rem"}}>
+                                    <Card sx={{ minWidth: 275, px: "1rem" }}>
                                         <CardContent>
                                             <Switch>
                                                 <PrivateRoute component={ProtectedPage} path="/protected" exact />
                                                 <Route component={Login} path="/login"/>
                                                 <Route component={Register} path="/register" />
+                                                <Route component={UsersPage} path="/users" />
                                                 <Route component={Home} path="/" />
                                             </Switch>
                                         </CardContent>
