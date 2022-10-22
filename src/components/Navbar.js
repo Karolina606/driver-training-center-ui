@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import { MDCTopAppBar } from '@material/top-app-bar';
@@ -43,19 +43,40 @@ const Navbar = () => {
         setAnchorElUser(null);
     };
 
-    const onMenuItemClick = (event, index) => {
+    // const onMenuItemClick = (event, index) => {
+    //     // setAnchorElUser(null);
+    //     console.log({index})
+    //     // setSelectedUserOption(index);
+    //     console.error("hello");
+    //     console.log({selectedUserOption});
+    //     if(selectedUserOption === 3){
+    //         console.log({user})
+    //         logoutUser();
+    //     }
+    //     handleCloseUserMenu();
+    //   };
+
+    useEffect(() => {
         // setAnchorElUser(null);
-        setSelectedUserOption(index);
+        // console.log({index})
+        // setSelectedUserOption(index);
         console.error("hello");
         console.log({selectedUserOption});
         if(selectedUserOption === 3){
+            console.log({user})
             logoutUser();
         }
-        handleCloseUserMenu();
-      };
+            handleCloseUserMenu();
+        },
+        [selectedUserOption]
+        );
+
+    const onMenuItemClick = (event, index) => {
+        setSelectedUserOption(index);
+    }
 
     const { user, logoutUser } = useContext(AuthContext);
-    console.log({user})
+    
 
     let menu_variants ;
     if(user == null){
