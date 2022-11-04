@@ -1,19 +1,14 @@
-import UserCard from "../components/UserCard";
-import UserInfo from "./UserPage";
+import CourseCard from "../components/CourseCard";
 import AuthContext from "../context/AuthContext";
 
 import { useContext, useEffect } from "react";
 import useAxios, {baseURL} from '../utils/useAxios'
 
 
-const UsersPage = () => {
-
-    const { user, logoutUser, authTokens } = useContext(AuthContext);
-
-
+const CoursesPage = () => {
     const { response, loading, error } = useAxios({
         method: 'get',
-        url: 'users'
+        url: 'courses'
     });
 
     useEffect(() => {
@@ -25,14 +20,13 @@ const UsersPage = () => {
 
   return (
     <section>
-      {/* {user && <UserInfo user={user} />} */}
-      <h1>You are on users page!</h1>
+      <h1>You are on courses page!</h1>
 
-         {response?.map((user1) => (
-            <UserCard user={user1}></UserCard>
+         {response?.map((course) => (
+            <CourseCard driving_license_category={course.driving_license_category} start_date={course.start_date}/>
         ))}
     </section>
   );
 };
 
-export default UsersPage;
+export default CoursesPage;

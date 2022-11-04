@@ -16,6 +16,11 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import UsersPage from "./pages/UsersPage";
+import UserPage from "./pages/UserPage";
+import CoursesPage from "./pages/CoursesPage";
+import CategoriesPage from "./pages/CategoriesPage";
+import LessonsPage from "./pages/LessonsPage";
+import { AlignHorizontalCenter } from "@mui/icons-material";
 
 const darkTheme = createTheme({
   palette: {
@@ -78,17 +83,21 @@ function App() {
                              <Navbar />
                                 <CssBaseline />
                                 <Container maxWidth="sm" sx={{ mt: "2rem", px: "1rem"}}>
-                                    <Card sx={{ minWidth: 275, px: "1rem" }}>
-                                        <CardContent>
+                                    {/* <Card sx={{ minWidth: 275, px: "1rem" }}>
+                                        <CardContent> */}
                                             <Switch>
                                                 <PrivateRoute component={ProtectedPage} path="/protected" exact />
                                                 <Route component={Login} path="/login"/>
                                                 <Route component={Register} path="/register" />
                                                 <Route component={UsersPage} path="/users" />
+                                                <Route component={CoursesPage} path="/courses" />
+                                                <Route component={CategoriesPage} path="/categories" />
+                                                <Route component={LessonsPage} path="/lessons" />
+                                                <Route component={UserPage} path="/user-profile" />
                                                 <Route component={Home} path="/" />
                                             </Switch>
-                                        </CardContent>
-                                    </Card>
+                                        {/* </CardContent>
+                                    </Card> */}
                                 </Container>
                             </ThemeProvider>
                         </AuthProvider>
