@@ -17,7 +17,9 @@ const LessonCard = (props) => {
     const [courseStatus, setCourseStatus] = useState([]);
 
     const fetchInstructor = (userId) => {
-        axios.get("/users/" + userId, {headers}).then(resp => {setInstructor(resp.data.first_name + " " + resp.data.last_name)});
+        const controller = new AbortController();
+        axios.get("/users/" + props.lesson.instructor, {headers}).then(resp => {setInstructor(resp.data.first_name + " " + resp.data.last_name)});
+        controller.abort();
     }
 
     const fetchCourse = (courseId) => {
@@ -25,9 +27,10 @@ const LessonCard = (props) => {
     }
 
     const fetchCourseStatus = (lesson_id) => {
-        axios.get("/student_course_status/" + lesson_id + "/get_by_lesson_id/", {headers}).then(resp => {console.log(resp);setCourseStatus(resp.data)});
+        axios.get("/student_course_status/" + lesson_id + "/get_by_lesson_id/", {headers}).then(resp => {setCourseStatus(resp.data)});
     }
 
+    
     fetchInstructor(props.lesson.instructor);
     fetchCourse(props.lesson.course);
     fetchCourseStatus(props.lesson.id)

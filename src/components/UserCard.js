@@ -15,6 +15,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContext from '../context/DialogContex';
 import EditUserDialogForm from './forms/EditUserForm';
 import { makeStyles } from '@material-ui/core';
+import EnrollCourse from './forms/EnrollCourse';
 
 
 const useStyles = makeStyles(theme => ({
@@ -40,7 +41,7 @@ const UserCard = (props) => {
 
   const { user, logoutUser } = useContext(AuthContext);
   const { authTokens, setUser, setAuthTokens } = useContext(AuthContext);
-  const headers = { Authorization: `Bearer ${authTokens?.access}` };
+  var headers = { Authorization: `Bearer ${authTokens?.access}` };
 
   const { response, loading, error } = useAxios({
     method: 'get',
@@ -50,27 +51,9 @@ const UserCard = (props) => {
   const [groupss, setGroups] = useState([]);
 
   const fetchGroups = async (groups) => {
-      // const groupNames = [];
-      // groups?.forEach(group => {
-      //   axios.get(group, {headers}).then(resp => {console.log({resp});
-      //   groupNames.push(resp.data.name)});
-      // });
-      // console.log({groupNames});
-      // return groupNames;
-
-      // let group_text = "";
-      // groups.forEach(group => {
-      //   axios.get(group, {headers}).then(resp => {group_text += resp.data.name + ", " });
-      // });
-      // setGroups(group_text);
-
       groups?.forEach(group => {
         axios.get(group, {headers}).then(resp => {setGroups([...groupss ,resp.data.name]) });
       });
-
-      // axios.get(groups[0], {headers}).then(resp => {let kconsole.log({resp});
-      //    return resp.data.name});
-      // // return k;
   }
 
   const username = props.user.username;
@@ -114,24 +97,56 @@ const UserCard = (props) => {
 
 
         {response?.groups.includes("http://127.0.0.1:8000/groups/1/") ?
+        <>
           <ButtonGroup variant="contained" aria-label="outlined primary button group">
-            <Button>One</Button>
             <Button onClick={e => {
-              axios.post('users/' + user_id + '/grand_student/', {}, headers)
+              headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
+              axios.post('/users/' + user_id + '/grand_student/', {}, headers);
+              window.location.reload(false);
             }}>
-              Grand student</Button>
-            <Button onClick={handleClickOpen}>Edit</Button>
-          </ButtonGroup>
+              Grand student
+            </Button>
+
+            <Button onClick={e => {
+              headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
+              axios.post('/users/' + user_id + '/grand_instructor/', {}, headers);
+              window.location.reload(false);
+            }}>
+              Grand instructor
+            </Button>
+
+            <Button onClick={e => {
+              headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
+              axios.post('/users/' + user_id + '/grand_admin/', {}, headers);
+              window.location.reload(false);
+              }}>
+              Grand admin
+            </Button>
+            </ButtonGroup>
+
+            {groups.includes("http://127.0.0.1:8000/groups/3/") ?
+           <ButtonGroup sx={{ mt: "1rem"}} variant="contained" aria-label="outlined primary button group">
+            <Button o onClick={handleClickOpen}>
+              Zapisz na kurs
+            </Button>
+          
+          </ButtonGroup> 
+          : <></>}
+          </>
           : <></>
         }
       </Card>
     </Container>
 
     <div>
-      <DialogContext.Provider value={[open, setOpen]}>
+      {/* <DialogContext.Provider value={[open, setOpen]}>
         <EditUserDialogForm></EditUserDialogForm>
-      </DialogContext.Provider>
+      </DialogContext.Provider> */}
     </div>
+
+<DialogContext.Provider value={[open, setOpen]}>
+<EnrollCourse student={props.user} />
+</DialogContext.Provider>
   </>
 }
 
