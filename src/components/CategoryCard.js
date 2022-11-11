@@ -40,7 +40,7 @@ const CategoryCard = (props) => {
                                 Pełny czas praktyki: {practice_time}
                             </Typography>
                         </Grid>
-                        <Grid item xs={2} >
+                        <Grid item xs={2} sx={{ m: "auto"}}>
                             <IconButton aria-label="delete" size="large" sx={{my: "auto" }} onClick={handleDelete}>
                                 <DeleteIcon />
                             </IconButton>

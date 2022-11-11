@@ -7,7 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContext from '../../context/DialogContex';
-import {makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import axios from 'axios';
 import AuthContext from '../../context/AuthContext';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -51,8 +51,10 @@ export default function EnrollCourse(props) {
   var headers = { Authorization: `Bearer ${authTokens?.access}` };
   const classes = useStyles();
 
-  const [course, setCourse] =  React.useState([]);
-  const [courses, setCourses] =  React.useState([]);
+  const [course, setCourse] = React.useState([]);
+  const [courses, setCourses] = React.useState([]);
+
+  const [courses2, setCourses2] = React.useState([]);
 
 
   const handleClose = () => {
@@ -60,17 +62,28 @@ export default function EnrollCourse(props) {
   };
 
   const fetchCourses = () => {
-    axios.get('/courses/',  {headers}).then(resp => {setCourses(resp.data)});
-}
+    axios.get('/courses/', { headers }).then(resp => { setCourses(resp.data) });
+  }
+
+  const [category, setCategory] = React.useState("");
+
+  const fetchCategory = async (course) => {
+   await axios.get(course.driving_license_category, { headers })
+    .then(resp => { 
+      course['category_details'] = resp.data.name + " T:" + resp.data.theory_full_time + " P:" + resp.data.practice_full_time;
+      setCourses2([...courses2, course]);
+    });
+  }
+
 
   const formatData = (dayjsValue) => {
-    var newDate = 
-      dayjsValue.$y + '-' + 
-      (parseInt(dayjsValue.$M) + 1).toString() + '-' + 
-      dayjsValue.$D + 'T' + 
-      dayjsValue.$H + ':'+ 
-      dayjsValue.$m + ':00Z' ;
-      console.log({newDate});
+    var newDate =
+      dayjsValue.$y + '-' +
+      (parseInt(dayjsValue.$M) + 1).toString() + '-' +
+      dayjsValue.$D + 'T' +
+      dayjsValue.$H + ':' +
+      dayjsValue.$m + ':00Z';
+    console.log({ newDate });
     return newDate;
   }
 
@@ -80,46 +93,56 @@ export default function EnrollCourse(props) {
     headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
 
     axios.post("student_course_status/",
-    {
-      "student": props.student.id,
-      "course": course,
-      "paid_money": 0,
-      "is_course_paid": false,
-      "is_internal_theoretical_exam_passed": false,
-      "is_internal_practical_exam_passed": false
-    },
-    headers);
-      setOpen(false);
-      window.location.reload(false);
+      {
+        "student": props.student.id,
+        "course": course,
+        "paid_money": 0,
+        "is_course_paid": false,
+        "is_internal_theoretical_exam_passed": false,
+        "is_internal_practical_exam_passed": false
+      },
+      headers);
+    setOpen(false);
+    window.location.reload(false);
   };
 
-  fetchCourses();
+  React.useEffect(() => {
+    fetchCourses();
+  }, []);
+
+  React.useEffect(() => {
+    courses?.forEach( course => {
+      fetchCategory(course);
+    });
+  }, [courses]);
 
   return (
     <div>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Wybierz kurs</DialogTitle>
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" >
+        <DialogTitle sx={{ width: "400px" }}>Wybierz kurs</DialogTitle>
         <DialogContent>
           <form className={classes.root} onSubmit={handleSubmit}>
 
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Kurs</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={course}
-              label="course"
-              onChange={e => setCourse(e.target.value)}
-            >
-              {courses?.map((course) => (
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Kurs</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={course}
+                label="course"
+                onChange={e => setCourse(e.target.value)}
+              >
+                {courses2?.map((course) => (
                     <MenuItem key={course.id} value={course.id}>
-                        {course.driving_license_category + "  " + format(new Date(course.start_date), 'dd.MM.yyyy HH:mm')}
+                      {"Kategoria: " + course.category_details + "  " + format(new Date(course.start_date), 'dd.MM.yyyy HH:mm')}
                     </MenuItem>
-                ))}
-            </Select>
+                  )
+                )
+            }
+              </Select>
             </FormControl>
 
-            </form>
+          </form>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Odrzuć</Button>

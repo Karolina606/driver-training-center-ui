@@ -16,6 +16,7 @@ import DialogContext from '../context/DialogContex';
 import EditUserDialogForm from './forms/EditUserForm';
 import { makeStyles } from '@material-ui/core';
 import EnrollCourse from './forms/EnrollCourse';
+import { purple, red } from '@mui/material/colors';
 
 
 const useStyles = makeStyles(theme => ({
@@ -48,12 +49,16 @@ const UserCard = (props) => {
     url: 'users/' + user.user_id
   });
 
-  const [groupss, setGroups] = useState([]);
+  const [groupsNames, setGroupNames] = useState([]);
 
   const fetchGroups = async (groups) => {
+
+    console.log({groups});
       groups?.forEach(group => {
-        axios.get(group, {headers}).then(resp => {setGroups([...groupss ,resp.data.name]) });
+        axios.get(group, {headers}).then(resp => {setGroupNames([...groupsNames ,resp.data.name]) });
+        console.log({groupsNames});
       });
+      
   }
 
   const username = props.user.username;
@@ -80,8 +85,12 @@ const UserCard = (props) => {
   };
 
 
+  useEffect(() => {
+    fetchGroups(groups);
+  }, []);
+
   return <>
-    <Container maxWidth="sm" sx={{ mt: "2rem", px: "1rem" }}>
+    <Container maxWidth="md" sx={{ mt: "2rem", px: "1rem" }}>
       <Card sx={{ minWidth: 130, p: "1rem" }}>
         <CardContent>
           <Typography variant="h5" component="div">
@@ -91,7 +100,8 @@ const UserCard = (props) => {
             Email: {email}
           </Typography>
           <Typography color="text.secondary">
-            Grupy: {groups}
+            Grupy: 
+            {/* {groupsNames?.map(name => {return ' ' + name + ' '})} */}
           </Typography>
         </CardContent>
 
@@ -103,30 +113,57 @@ const UserCard = (props) => {
               headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
               axios.post('/users/' + user_id + '/grand_student/', {}, headers);
               window.location.reload(false);
-            }}>
-              Grand student
+            }} 
+            disabled={groups.includes("http://127.0.0.1:8000/groups/3/")}>
+              {groups.includes("http://127.0.0.1:8000/groups/3/") ?
+                <>
+                  Student
+                </>
+                :
+                <>
+                  Grand student
+                </>
+              }
             </Button>
 
             <Button onClick={e => {
               headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
               axios.post('/users/' + user_id + '/grand_instructor/', {}, headers);
               window.location.reload(false);
-            }}>
-              Grand instructor
+            }}
+            disabled={groups.includes("http://127.0.0.1:8000/groups/2/")}>
+              {groups.includes("http://127.0.0.1:8000/groups/2/") ?
+                <>
+                  Instructor
+                </>
+                :
+                <>
+                  Grand instructor
+                </>
+              }
             </Button>
 
             <Button onClick={e => {
               headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
               axios.post('/users/' + user_id + '/grand_admin/', {}, headers);
-              window.location.reload(false);
-              }}>
-              Grand admin
+              window.location.reload(false)
+              }}
+              disabled={groups.includes("http://127.0.0.1:8000/groups/1/")}>
+              {groups.includes("http://127.0.0.1:8000/groups/1/") ?
+                <>
+                  Admin
+                </>
+                :
+                <>
+                  Grand admin
+                </>
+              }
             </Button>
             </ButtonGroup>
 
             {groups.includes("http://127.0.0.1:8000/groups/3/") ?
-           <ButtonGroup sx={{ mt: "1rem"}} variant="contained" aria-label="outlined primary button group">
-            <Button o onClick={handleClickOpen}>
+           <ButtonGroup sx={{ mt: "1rem", width: '100%'}} variant="contained" aria-label="outlined button group">
+            <Button onClick={handleClickOpen} sx={{ mt: "1rem", width: '100%'}} variant="outlined" aria-label="outlined button group">
               Zapisz na kurs
             </Button>
           

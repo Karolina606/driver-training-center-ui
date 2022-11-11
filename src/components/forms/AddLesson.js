@@ -219,9 +219,8 @@ const fetchStudents = () => {
             </Select>
             </FormControl>
             
-
-            <FormControl fullWidth>
-            <LocalizationProvider 
+                <FormControl fullWidth>
+                <LocalizationProvider 
                 dateAdapter={AdapterDayjs}
                 // adapterLocale={pl}
                 localeText={plPL.components.MuiLocalizationProvider.defaultProps.localeText}
@@ -234,7 +233,16 @@ const fetchStudents = () => {
                   ampm={false}
                   // inputFormat="YYYY-MM-DDTHH:mm:00Z"
                 />
+                </LocalizationProvider>
+                </FormControl>
 
+                <FormControl fullWidth>
+
+                <LocalizationProvider 
+                dateAdapter={AdapterDayjs}
+                // adapterLocale={pl}
+                localeText={plPL.components.MuiLocalizationProvider.defaultProps.localeText}
+              >
                 <DateTimePicker 
                   label="Data zakończenia"
                   value={endDate}
@@ -242,11 +250,11 @@ const fetchStudents = () => {
                   renderInput={(params) => <TextField {...params} />}
                   ampm={false}
                   // inputFormat="YYYY-MM-DDTHH:mm:00Z"
-                />  
-              </LocalizationProvider>
+                /> 
+                </LocalizationProvider>
           </FormControl>
 
-          <FormControl sx={{ m: 1, width: 300 }}>
+          <FormControl fullWidth>
         <InputLabel id="demo-multiple-name-label">Kursanci</InputLabel>
         <Select
           labelId="demo-multiple-name-label"

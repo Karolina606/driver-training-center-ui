@@ -1,11 +1,13 @@
 import { Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import useAxios, {baseURL} from '../utils/useAxios'
 import AuthContext from "../context/AuthContext";
+import axios from "axios";
 
 const UserPage = () => {
-  const { user, logoutUser } = useContext(AuthContext);
+  const { user, authTokens } = useContext(AuthContext);
+  var headers = { Authorization: `Bearer ${authTokens?.access}` };
 
   const { response, loading, error } = useAxios({
       method: 'get',
@@ -18,13 +20,27 @@ const UserPage = () => {
       }
     }, [response]);
 
+    const [groupsNames, setGroupNames] = useState([]);
+
+    const fetchGroups = async (groups) => {
+      console.log({groups});
+        groups?.forEach(group => {
+          axios.get(group, {headers}).then(resp => {setGroupNames([...groupsNames ,resp.data.name]) });
+          console.log({groupsNames});
+        });  
+    }
+
+    useEffect(() => {
+      fetchGroups(response?.groups);
+    }, [response]);
+
   console.log({response})
     return (
       <Box>
         <h1>Hello, {response?.username}</h1>
         <Typography>{response?.first_name} {response?.last_name}</Typography>
         <Typography>{response?.email}</Typography>
-        <Typography>{response?.groups}</Typography>
+        <Typography>{groupsNames}</Typography>
       </Box>
     );
   }
