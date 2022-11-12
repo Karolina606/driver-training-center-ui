@@ -16,6 +16,11 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import UsersPage from "./pages/UsersPage";
+import UserPage from "./pages/UserPage";
+import CoursesPage from "./pages/CoursesPage";
+import CategoriesPage from "./pages/CategoriesPage";
+import LessonsPage from "./pages/LessonsPage";
+import { AlignHorizontalCenter } from "@mui/icons-material";
 
 const darkTheme = createTheme({
   palette: {
@@ -25,6 +30,19 @@ const darkTheme = createTheme({
     },
       secondary: {
         main: '#ffffff',
+    },
+    third: {
+      main: '#f4511e',
+    }
+  },
+
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 700,
+      lg: 1200,
+      xl: 1536,
     },
   },
 //   root: {
@@ -77,22 +95,24 @@ function App() {
                         <ThemeProvider theme={darkTheme}>
                              <Navbar />
                                 <CssBaseline />
-                                <Container maxWidth="sm" sx={{ mt: "2rem", px: "1rem"}}>
-                                    <Card sx={{ minWidth: 275, px: "1rem" }}>
-                                        <CardContent>
-                                            <Switch>
-                                                <PrivateRoute component={ProtectedPage} path="/protected" exact />
-                                                <Route component={Login} path="/login"/>
-                                                <Route component={Register} path="/register" />
-                                                <Route component={UsersPage} path="/users" />
-                                                <Route component={Home} path="/" />
-                                            </Switch>
-                                        </CardContent>
-                                    </Card>
+                                <Container maxWidth="md" sx={{ mt: "2rem", px: "1rem", minHeight: 'calc(100vh - 34px)'}}>
+                                  <Switch>
+                                      <PrivateRoute component={ProtectedPage} path="/protected" exact />
+                                      <Route component={Login} path="/login"/>
+                                      <Route component={Register} path="/register" />
+                                      <Route component={UsersPage} path="/users" />
+                                      <Route component={CoursesPage} path="/courses" />
+                                      <Route component={CategoriesPage} path="/categories" />
+                                      <Route component={LessonsPage} path="/lessons" />
+                                      <Route component={UserPage} path="/user-profile" />
+                                      <Route component={Home} path="/" />
+                                  </Switch>
+                                  
                                 </Container>
+                                <Footer />
                             </ThemeProvider>
                         </AuthProvider>
-                        <Footer />
+                        
                     </div>
                 </Router>
             </main>

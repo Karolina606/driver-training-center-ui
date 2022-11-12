@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 
 import * as React from 'react';
@@ -17,14 +17,33 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 
-const pages = ['Użytkownicy', 'Kursy', 'Lekcje', 'Kategorie'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const pages = [
+    <Button textAlign="center" component={Link} to="/users">
+        Użytkownicy
+    </Button>,
+    <Button textAlign="center" component={Link} to="/courses">
+        Kursy
+    </Button>,
+    <Button textAlign="center" component={Link} to="/lessons">
+        Lekcje
+    </Button>,
+    <Button textAlign="center" component={Link} to="/categories">
+        Kategorie
+    </Button>
+];
+const settings = [
+    <Button textAlign="center" component={Link} to="/user-profile">
+        Profile
+    </Button>
+    , 'Account', 'Dashboard', 'Logout'];
 
 const Navbar = () => {
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [selectedUserOption, setSelectedUserOption] = React.useState(-1);
+    const history = useHistory();
+
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -38,50 +57,49 @@ const Navbar = () => {
     };
 
     const handleCloseUserMenu = () => {
-        console.log({anchorElUser});
+        console.log({ anchorElUser });
         setAnchorElUser(null);
     };
-    
+
 
     useEffect(() => {
-        console.log({selectedUserOption});
-        if(selectedUserOption === 3){
-            console.log({user})
+        console.log({ selectedUserOption });
+        if (selectedUserOption === 0) {
+            history.push('/user-profile');
+        } else if (selectedUserOption === 3) {
+            console.log({ user })
             logoutUser();
         }
-            handleCloseUserMenu();
-            setSelectedUserOption(-1);
+        handleCloseUserMenu();
+        setSelectedUserOption(-1);
 
-        },
-        [selectedUserOption]
-        );
+    }, [selectedUserOption]
+    );
 
     const onMenuItemClick = (event, index) => {
-        console.log({index});
+        console.log({ index });
         setSelectedUserOption(index);
     }
 
     const { user, logoutUser } = useContext(AuthContext);
-    
 
-    let menu_variants ;
-    if(user == null){
+
+    let menu_variants;
+    if (user == null) {
         menu_variants = <></>
-    }else{
-        menu_variants = 
+    } else {
+        menu_variants =
             <>
-            {pages?.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Button textAlign="center" component={Link} to="/users">
+                {pages?.map((page) => (
+                    <MenuItem key={page} onClick={handleCloseNavMenu}>
                         {page}
-                    </Button>
-                </MenuItem>
-            ))}
+                    </MenuItem>
+                ))}
             </>
     }
 
     let user_buttons;
-    if(user == null){
+    if (user == null) {
         user_buttons = <>
             <Button textAlign="center" component={Link} to="/login">
                 Login
@@ -90,14 +108,16 @@ const Navbar = () => {
                 Zarejestruj
             </Button>
         </>
-    }else{
-        user_buttons = 
+    } else {
+        user_buttons =
             <>
                 <Box sx={{ flexGrow: 0 }}>
                     <Tooltip title="Open settings">
+
                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                             <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
                         </IconButton>
+
                     </Tooltip>
                     <Menu
                         sx={{ mt: '45px' }}
@@ -131,7 +151,9 @@ const Navbar = () => {
         <AppBar position="static" >
             <Container maxWidth="x4">
                 <Toolbar disableGutters>
-                    <DirectionsCarIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                    <Link to="/" className="icon">
+                        <DirectionsCarIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                    </Link>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
@@ -160,7 +182,7 @@ const Navbar = () => {
                             sx={{
                                 display: { xs: 'block', md: 'none' },
                             }}
-                            >
+                        >
                             {menu_variants}
                         </Menu>
                     </Box>

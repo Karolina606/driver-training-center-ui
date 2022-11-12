@@ -11,3 +11,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.icon {
+  color: #ffb300;
+}
+
+.MuiButtonGroup-root.MuiButtonGroup-contained.css-1s5ardk-MuiButtonGroup-root{
+  width: 100%;
+}
+
+.MuiButtonGroup-root.MuiButtonGroup-contained.css-1s5ardk-MuiButtonGroup-root .MuiButtonBase-root{
+  width: 100%;
+}

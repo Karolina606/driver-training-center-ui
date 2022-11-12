@@ -1,5 +1,5 @@
 import UserCard from "../components/UserCard";
-import UserInfo from "../components/UserInfo";
+import UserInfo from "./UserPage";
 import AuthContext from "../context/AuthContext";
 
 import { useContext, useEffect } from "react";
@@ -25,11 +25,11 @@ const UsersPage = () => {
 
   return (
     <section>
-      {user && <UserInfo user={user} />}
-      <h1>You are on users page!</h1>
+      {/* {user && <UserInfo user={user} />} */}
+      <h1>Użytkownicy:</h1>
 
          {response?.map((user1) => (
-            <UserCard username={user1.username} email={user1.email}></UserCard>
+            <UserCard user={user1}></UserCard>
         ))}
     </section>
   );
