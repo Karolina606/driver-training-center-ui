@@ -40,6 +40,10 @@ const CourseCard = (props) => {
          });
        }
 
+    const fetchCourses = async () => {
+        await axios.get("/courses/", { headers }).then(resp => { props.updateCourses(resp.data) });
+      }
+
     useEffect(() => {
         fetchCategory(props.course.driving_license_category);
         fetchStudents(id);
@@ -68,8 +72,8 @@ const CourseCard = (props) => {
         console.log({ id });
         console.log({ headers });
 
-        axios.delete("courses/" + id, { headers });
-        window.location.reload(false);
+        await axios.delete("courses/" + id, { headers });
+        fetchCourses();
     };
 
     return <>

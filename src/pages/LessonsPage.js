@@ -17,12 +17,16 @@ const LessonsPage = () => {
         method: 'get',
         url: 'lessons'
     });
+    const [lessons, setLessons] = useState([]);
+
+    const updateLessons = (newValues) => {
+      setLessons(newValues);
+    }
 
     useEffect(() => {
         if(response !== null ){
             console.log({response});
-
-
+            setLessons(response);
         }
       }, [response]);
 
@@ -37,18 +41,19 @@ const LessonsPage = () => {
 
   return ( <>
     <section>
-      <h1>You are on lessons page!</h1>
-         {response?.map((lesson) => (
-            <LessonCard lesson={lesson}/>
-        ))}
-    </section>
 
-    <Fab color="primary" aria-label="add" sx={{ position: 'absolute', bottom: 16, right: 16 }} onClick={handleClickOpen}>
+      <h1>Lekcje:</h1>
+         {lessons?.map((lesson) => (
+            <LessonCard lesson={lesson} updateLessons={updateLessons}/>
+        ))}
+
+    <Fab color="primary" aria-label="add" sx={{ position: 'fixed', bottom: 16, right: 16 }} onClick={handleClickOpen}>
       <AddIcon />
     </Fab>
+    </section>
 
     <DialogContext.Provider value={[open, setOpen]}>
-      <AddLesson />
+      <AddLesson updateLessons={updateLessons}/>
     </DialogContext.Provider>
   </>
   );

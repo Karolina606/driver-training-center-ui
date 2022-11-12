@@ -95,7 +95,7 @@ function App() {
                         <ThemeProvider theme={darkTheme}>
                              <Navbar />
                                 <CssBaseline />
-                                <Container maxWidth="md" sx={{ mt: "2rem", px: "1rem"}}>
+                                <Container maxWidth="md" sx={{ mt: "2rem", px: "1rem", minHeight: 'calc(100vh - 34px)'}}>
                                   <Switch>
                                       <PrivateRoute component={ProtectedPage} path="/protected" exact />
                                       <Route component={Login} path="/login"/>
@@ -107,10 +107,12 @@ function App() {
                                       <Route component={UserPage} path="/user-profile" />
                                       <Route component={Home} path="/" />
                                   </Switch>
+                                  
                                 </Container>
+                                <Footer />
                             </ThemeProvider>
                         </AuthProvider>
-                        <Footer />
+                        
                     </div>
                 </Router>
             </main>

@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     padding: theme.spacing(2),
-    '& .MuiTextField-root': {
+    '& .MuiFormControl-root': {
       margin: theme.spacing(1),
       maxWidth: '300px',
       minWidth: '130px'
@@ -68,6 +68,10 @@ export default function AddCourse(props) {
       axios.get('/driving_license_categories/',  {headers}).then(resp => {setCategories(resp.data)});
   }
 
+  const fetchCourses = async () => {
+    await axios.get("/courses/", { headers }).then(resp => { props.updateCourses(resp.data) });
+  }
+
   const formatData = (dayjsValue) => {
     var newDate = 
       dayjsValue.$y + '-' + 
@@ -89,17 +93,23 @@ export default function AddCourse(props) {
     setStartDate(formatData(startDate));
     console.log({startDate});
 
-    axios.post("courses/",
+    await axios.post("courses/",
     {
       "driving_license_category": dialogCategory,
       "start_date": formatData(startDate)
     },
     headers);
       setOpen(false);
-      window.location.reload(false);
+
   };
 
-  fetchCategories();
+  React.useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  React.useEffect(() => {
+    fetchCourses();
+  }, [open]);
 
   return (
     <div>
@@ -116,6 +126,7 @@ export default function AddCourse(props) {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
+              className='MuiTextField-root'
               value={dialogCategory}
               label="Kategoria"
               onChange={e => setCategory(e.target.value)}
@@ -126,6 +137,7 @@ export default function AddCourse(props) {
                     </MenuItem>
                 ))}
             </Select>
+            </FormControl>
 
             <LocalizationProvider 
                 dateAdapter={AdapterDayjs}
@@ -141,7 +153,6 @@ export default function AddCourse(props) {
                   // inputFormat="YYYY-MM-DDTHH:mm:00Z"
                 />
               </LocalizationProvider>
-          </FormControl>
 
             </form>
         </DialogContent>

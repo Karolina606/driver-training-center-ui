@@ -14,14 +14,18 @@ const CategoryCard = (props) => {
     const { authTokens } = useContext(AuthContext);
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
   
+    const fetchCategories = async () => {
+        await axios.get("/driving_license_categories/", { headers }).then(resp => { props.updateCategories(resp.data) });
+      }
+
     const handleDelete = async e => {
         e.preventDefault();
         console.log({name});
         console.log({id});
         console.log({headers});
 
-        axios.delete("driving_license_categories/" + id, {headers});
-        window.location.reload(false);
+        await axios.delete("driving_license_categories/" + id, {headers});
+        fetchCategories();
     };
 
     return <>

@@ -1,9 +1,10 @@
 
-import { Container, Card, CardContent, Typography } from '@mui/material';
+import { Container, Card, CardContent, Typography, Grid, IconButton } from '@mui/material';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
 import { useContext, useState, useEffect } from 'react';
 import { format } from 'date-fns';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -45,6 +46,10 @@ const LessonCard = (props) => {
          });
        }
 
+       const fetchLessons = async () => {
+        await axios.get("/lessons/", { headers }).then(resp => {props.updateLessons(resp.data) });
+    }
+
     useEffect(() => {
         fetchInstructor(props.lesson.instructor);
         fetchCourse(props.lesson.course);
@@ -57,26 +62,45 @@ const LessonCard = (props) => {
         });
     }, [courseStatus]);
 
+    const handleDelete = async e => {
+        e.preventDefault();
+        console.log({ props });
+        console.log({ headers });
+
+        await axios.delete("lessons/" + props.lesson.id + '/', { headers });
+        fetchLessons();
+    };
 
     return <>
         <Container maxWidth="sm" sx={{ mt: "2rem", px: "1rem" }}>
             <Card sx={{ minWidth: 130 }}>
                 <CardContent sx={{px: "2rem" }}>
-                    <Typography variant="h7" component="div">
-                        Kurs: {course}
-                    </Typography>
-                    <Typography color="text.secondary">
-                        Instruktor: {instructor}
-                    </Typography>
-                    <Typography color="text.secondary">
-                        Typ: {type}
-                    </Typography>
-                    <Typography color="text.secondary">
-                        Data rozpoczęcia: {format(new Date(start_date), 'dd.MM.yyyy, HH:mm')}
-                    </Typography>
-                    <Typography color="text.secondary">
-                        Data zakończenia: {format(new Date(end_date), 'dd.MM.yyyy, HH:mm')}
-                    </Typography>
+                    <Grid container spacing={2}>
+                        <Grid item xs={10}>
+                            <Typography variant="h7" component="div">
+                                Kurs: {course}
+                            </Typography>
+                            <Typography color="text.secondary">
+                                Instruktor: {instructor}
+                            </Typography>
+                            <Typography color="text.secondary">
+                                Typ: {type}
+                            </Typography>
+                            <Typography color="text.secondary">
+                                Data rozpoczęcia: {format(new Date(start_date), 'dd.MM.yyyy, HH:mm')}
+                            </Typography>
+                            <Typography color="text.secondary">
+                                Data zakończenia: {format(new Date(end_date), 'dd.MM.yyyy, HH:mm')}
+                            </Typography>
+                        </Grid>
+
+                        <Grid item xs={2} sx={{ m: "auto" }} >
+                            <IconButton aria-label="delete" size="large" sx={{ my: "auto" }} onClick={handleDelete}>
+                                <DeleteIcon />
+                            </IconButton>
+                        </Grid>
+                    </Grid>
+
                 </CardContent>
 
                 <Accordion>

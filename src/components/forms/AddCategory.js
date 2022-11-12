@@ -41,15 +41,17 @@ export default function AddCategory(props) {
     setOpen(false);
   };
 
+  const fetchCategories = async () => {
+    await axios.get("/driving_license_categories/", { headers }).then(resp => { props.updateCategories(resp.data) });
+  }
+
   const [dialogCategory, setCategory] = React.useState('');
   const [dialogTheory, setTheory] = React.useState('');
   const [dialogPractice, setPractice] = React.useState('');
 
   const handleSubmit = async e => {
     e.preventDefault();
-
-
-    axios.post("driving_license_categories/",
+    await axios.post("driving_license_categories/",
       {
         "name": dialogCategory, 
         "theory_full_time": dialogTheory, 
@@ -59,6 +61,10 @@ export default function AddCategory(props) {
       setOpen(false);
       window.location.reload(false);
   };
+
+  React.useEffect(() => {
+    fetchCategories();
+  }, [open]);
 
   return (
     <div>

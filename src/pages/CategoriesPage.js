@@ -12,14 +12,20 @@ import AddCategory from "../components/forms/AddCategory";
 const CategoriesPage = () => {
 
   const [open, setOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
     const { response, loading, error } = useAxios({
         method: 'get',
         url: 'driving_license_categories'
     });
 
+    const updateCategories = (newValues) => {
+      setCategories(newValues);
+    }
+
     useEffect(() => {
         if(response !== null ){
             console.log({response});
+            setCategories(response);
         }
       }, [response]);
 
@@ -33,18 +39,18 @@ const CategoriesPage = () => {
 
   return (
     <section>
-      <h1>You are on category page!</h1>
+      <h1>Kategorie praw jazdy:</h1>
 
-         {response?.map((category) => (
-            <CategoryCard category={category}/>
+         {categories?.map((category) => (
+            <CategoryCard category={category} updateCategories={updateCategories}/>
         ))}
 
-      <Fab color="primary" aria-label="add" sx={{position: 'absolute', bottom: 16, right: 16}} onClick={handleClickOpen}>
+      <Fab color="primary" aria-label="add" sx={{position: 'fixed', bottom: 16, right: 16}} onClick={handleClickOpen}>
         <AddIcon />
       </Fab>
 
       <DialogContext.Provider value={[open, setOpen]}>
-        <AddCategory/>
+        <AddCategory updateCategories={updateCategories}/>
       </DialogContext.Provider>
     </section>
   );

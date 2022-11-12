@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     padding: theme.spacing(2),
-    '& .MuiTextField-root': {
+    '& .MuiFormControl-root': {
       margin: theme.spacing(1),
       maxWidth: '300px',
       minWidth: '130px'
@@ -77,8 +77,9 @@ export default function AddLesson(props) {
 
   const [selectedStudents, setSelectedStudents] =  React.useState([]);
   const [students, setStudents] =  React.useState([]);
+  const [students2, setStudents2] = React.useState([]);
+  const [courses2, setCourses2] = React.useState([]);
 
-  const [newLessonId, setNewLessonId] =  React.useState(-1);
 
 
   const handleChangeStartDate = (newValue) => {
@@ -103,8 +104,32 @@ export default function AddLesson(props) {
 }
 
 const fetchStudents = () => {
-  axios.get('/student_course_status/',  {headers}).then(resp => {setStudents(resp.data)});
+  axios.get('/student_course_status/', {headers}).then(resp => {setStudents(resp.data)});
 }
+
+const fetchLessons = async () => {
+  await axios.get("/lessons/", { headers }).then(resp => { props.updateLessons(resp.data) });
+}
+
+
+const fetchStudentsDetails = async (student) => {
+  console.log({student});
+     await axios.get('users/' + student.student, { headers })
+     .then(resp => { 
+       student['student_details'] = resp.data.first_name + " " + resp.data.last_name;
+       console.log({student});
+       setStudents2(students2 => [...students2, student]);
+     });
+     console.log({students2});
+   }
+
+   const fetchCategory = async (course) => {
+    await axios.get(course.driving_license_category, { headers })
+     .then(resp => { 
+       course['category_details'] = resp.data.name + " T:" + resp.data.theory_full_time + " P:" + resp.data.practice_full_time;
+       setCourses2([...courses2, course]);
+     });
+   }
 
   const formatData = (dayjsValue) => {
     var newDate = 
@@ -117,12 +142,12 @@ const fetchStudents = () => {
     return newDate;
   }
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
 
     headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
     
-      axios.post("lessons/",
+      await axios.post("lessons/",
       {
           "instructor": instructor,
           "course": course,
@@ -131,17 +156,16 @@ const fetchStudents = () => {
           "end_date": formatData(endDate)
       },
       headers).then(resp => {
-        setNewLessonId(resp.data.id);
-        addLessonToStudentStatus();
-      
+        addLessonToStudentStatus(resp.data.id);
       });
       setOpen(false);
-      window.location.reload(false);
+      
   };
 
-  const addLessonToStudentStatus = () => {
-    selectedStudents.forEach(student_id => {
-        axios.post("/student_course_status/" + student_id + "/add_lesson_to_stu_course/" + newLessonId + "/", {}, headers);
+
+  const addLessonToStudentStatus = async (lesson_id) => {
+    await selectedStudents.forEach(student_id => {
+        axios.post("/student_course_status/" + student_id + "/add_lesson_to_stu_course/" + lesson_id + "/", {}, headers);
     });
   }
 
@@ -154,9 +178,25 @@ const fetchStudents = () => {
     );
   };
 
-  fetchInstructors();
-  fetchCourses();
-  fetchStudents();
+  React.useEffect(() => {
+    fetchInstructors();
+    fetchCourses();
+    fetchStudents();
+}, []);
+
+React.useEffect(() => {
+    students?.forEach(student => {
+        fetchStudentsDetails(student);
+    });
+    courses?.forEach((course) => {
+      console.log({courses})
+      fetchCategory(course);
+    });
+}, [students, courses]);
+
+React.useEffect(() => {
+  fetchLessons();
+}, [open]);
 
   return (
     <div>
@@ -196,7 +236,8 @@ const fetchStudents = () => {
             >
               {courses?.map((course) => (
                     <MenuItem key={course.id} value={course.id}>
-                        {course.driving_license_category + "  " + format(new Date(course.start_date), 'dd.MM.yyyy HH:mm')}
+                        {/* {course.driving_license_category + "  " + format(new Date(course.start_date), 'dd.MM.yyyy HH:mm')} */}
+                        {course.category_details}
                     </MenuItem>
                 ))}
             </Select>
@@ -219,7 +260,6 @@ const fetchStudents = () => {
             </Select>
             </FormControl>
             
-                <FormControl fullWidth>
                 <LocalizationProvider 
                 dateAdapter={AdapterDayjs}
                 // adapterLocale={pl}
@@ -234,9 +274,6 @@ const fetchStudents = () => {
                   // inputFormat="YYYY-MM-DDTHH:mm:00Z"
                 />
                 </LocalizationProvider>
-                </FormControl>
-
-                <FormControl fullWidth>
 
                 <LocalizationProvider 
                 dateAdapter={AdapterDayjs}
@@ -252,7 +289,6 @@ const fetchStudents = () => {
                   // inputFormat="YYYY-MM-DDTHH:mm:00Z"
                 /> 
                 </LocalizationProvider>
-          </FormControl>
 
           <FormControl fullWidth>
         <InputLabel id="demo-multiple-name-label">Kursanci</InputLabel>
@@ -265,12 +301,12 @@ const fetchStudents = () => {
           input={<OutlinedInput label="Name" />}
           MenuProps={MenuProps}
         >
-          {students?.map((student) => (
+          {students2?.map((student) => (
             <MenuItem
               key={student.id}
               value={student.id}
             >
-              {student.student + " " + student.course}
+              {student.student_details}
             </MenuItem>
           ))}
         </Select>

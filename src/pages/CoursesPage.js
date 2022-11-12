@@ -17,13 +17,18 @@ const CoursesPage = () => {
     url: 'courses'
   });
 
-  useEffect(() => {
-    if (response !== null) {
-      console.log({ response });
+  const [courses, setCourses] = useState([]);
+
+    const updateCourses = (newValues) => {
+      setCourses(newValues);
     }
-  }, [response]);
 
-
+    useEffect(() => {
+        if(response !== null ){
+            console.log({response});
+            setCourses(response);
+        }
+      }, [response]);
 
     const handleClickOpen = () => {
       setOpen(true);
@@ -37,19 +42,19 @@ const CoursesPage = () => {
 
   return (<>
     <section>
-      <h1>You are on courses page!</h1>
+      <h1>Kursy:</h1>
 
-      {response?.map((course) => (
-        <CourseCard course={course} />
+      {courses?.map((course) => (
+        <CourseCard course={course} updateCourses={updateCourses} />
       ))}
     </section>
 
-    <Fab color="primary" aria-label="add" sx={{ position: 'absolute', bottom: 16, right: 16 }} onClick={handleClickOpen}>
+    <Fab color="primary" aria-label="add" sx={{ position: 'fixed', bottom: 16, right: 16 }} onClick={handleClickOpen}>
       <AddIcon />
     </Fab>
 
     <DialogContext.Provider value={[open, setOpen]}>
-      <AddCourse />
+      <AddCourse updateCourses={updateCourses}/>
     </DialogContext.Provider>
   </>
   );

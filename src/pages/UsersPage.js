@@ -26,7 +26,7 @@ const UsersPage = () => {
   return (
     <section>
       {/* {user && <UserInfo user={user} />} */}
-      <h1>You are on users page!</h1>
+      <h1>Użytkownicy:</h1>
 
          {response?.map((user1) => (
             <UserCard user={user1}></UserCard>
