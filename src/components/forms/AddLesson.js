@@ -80,9 +80,29 @@ export default function AddLesson(props) {
   const [students2, setStudents2] = React.useState([]);
   const [courses2, setCourses2] = React.useState([]);
 
+  const lessonToEdit = props.lessonToEdit;
+
+  React.useEffect(() => {
+    console.log({lessonToEdit});
+    if(lessonToEdit !== undefined ){
+      setInstructor(lessonToEdit.instructor);
+      setCourse(lessonToEdit.course);
+      setType(lessonToEdit.type);
+      const start = formatDateFromDatabase(lessonToEdit.start_date);
+      setStartDate(start);
+      
+      const end = formatDateFromDatabase(lessonToEdit.end_date);
+      setEndDate(end);
+    console.log({end});
+    console.log({endDate});
+    }
+    
+  },[]);
+  
 
 
   const handleChangeStartDate = (newValue) => {
+    console.log(newValue);
     setStartDate(newValue);
   };
 
@@ -123,13 +143,30 @@ const fetchStudentsDetails = async (student) => {
      console.log({students2});
    }
 
-   const fetchCategory = async (course) => {
+   const fetchCourseDetails = async (course) => {
+    // headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
     await axios.get(course.driving_license_category, { headers })
      .then(resp => { 
-       course['category_details'] = resp.data.name + " T:" + resp.data.theory_full_time + " P:" + resp.data.practice_full_time;
+       course['course_details'] = resp.data.name + " T:" + resp.data.theory_full_time + " P:" + resp.data.practice_full_time + ", " + format(new Date(course.start_date), 'dd.MM.yyyy HH:mm');
        setCourses2([...courses2, course]);
      });
    }
+
+   const formatDateFromDatabase = (date) => {
+    const dateSplited = date.replace('T', '-').replace(':00Z', '').replace(':', '-').split('-');
+    console.log({dateSplited});
+    var newDate = dayjs(now.toString());
+      newDate.$L = 'pl'
+      newDate.$y = parseInt(dateSplited[0]);
+      newDate.$M = parseInt(dateSplited[1]) - 1;
+      newDate.$D = parseInt(dateSplited[2]);
+      newDate.$H = parseInt(dateSplited[3]);
+      newDate.$m = parseInt(dateSplited[4]);
+      var date_long_format = new Date(date.replace('Z', ''));
+      newDate.$d = date_long_format;
+      console.log({newDate});
+    return newDate;
+  }
 
   const formatData = (dayjsValue) => {
     var newDate = 
@@ -147,19 +184,37 @@ const fetchStudentsDetails = async (student) => {
 
     headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
     
-      await axios.post("lessons/",
-      {
-          "instructor": instructor,
-          "course": course,
-          "type": type,
-          "start_date": formatData(startDate),
-          "end_date": formatData(endDate)
-      },
-      headers).then(resp => {
-        addLessonToStudentStatus(resp.data.id);
-      });
+    if(lessonToEdit === undefined){
+        await axios.post("lessons/",
+        {
+            "instructor": instructor,
+            "course": course,
+            "type": type,
+            "start_date": formatData(startDate),
+            "end_date": formatData(endDate)
+        },
+        headers).then(resp => {
+          addLessonToStudentStatus(resp.data.id);
+        });
+      }else{
+        console.log({lessonToEdit});
+        console.log({instructor});
+        console.log({course});
+        console.log({type});
+
+        await axios.put(lessonToEdit.url,
+        {
+            "instructor": instructor,
+            "course": course,
+            "type": type,
+            "start_date": formatData(startDate),
+            "end_date": formatData(endDate)
+        },
+        headers).then(resp => {
+          addLessonToStudentStatus(lessonToEdit.id);
+        });
+      }
       setOpen(false);
-      
   };
 
 
@@ -184,13 +239,14 @@ const fetchStudentsDetails = async (student) => {
     fetchStudents();
 }, []);
 
+
 React.useEffect(() => {
     students?.forEach(student => {
         fetchStudentsDetails(student);
     });
     courses?.forEach((course) => {
       console.log({courses})
-      fetchCategory(course);
+      fetchCourseDetails(course);
     });
 }, [students, courses]);
 
@@ -201,10 +257,10 @@ React.useEffect(() => {
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Dodaj nową lekcję</DialogTitle>
+        <DialogTitle>{lessonToEdit === undefined ? 'Dodaj nową lekcję' : 'Edytuj lekcję'}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Dodaj nową lekcje, czas rozpoczęcia, zakończenia.
+          {lessonToEdit === undefined ? 'Dodaj nową lekcje, czas rozpoczęcia, zakończenia.' : 'Edytuj'}
           </DialogContentText>
           <form className={classes.root} onSubmit={handleSubmit}>
 
@@ -236,8 +292,8 @@ React.useEffect(() => {
             >
               {courses?.map((course) => (
                     <MenuItem key={course.id} value={course.id}>
-                        {/* {course.driving_license_category + "  " + format(new Date(course.start_date), 'dd.MM.yyyy HH:mm')} */}
-                        {course.category_details}
+                        {course.course_details}
+                        {/* {course.category_details} */}
                     </MenuItem>
                 ))}
             </Select>

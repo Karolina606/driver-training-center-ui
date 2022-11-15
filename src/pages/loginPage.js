@@ -44,7 +44,7 @@ const LoginPage = () => {
   return (
     <section>
       <Card sx={{ minWidth: 275, px: "1rem" }}>
-        <CardContent>
+        <CardContent maxWidth="sm">
           {/* <form onSubmit={handleSubmit}>
         <h1>Login </h1>
         <hr />

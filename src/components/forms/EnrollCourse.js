@@ -103,7 +103,7 @@ export default function EnrollCourse(props) {
       },
       headers);
     setOpen(false);
-    window.location.reload(false);
+    // window.location.reload(false);
   };
 
   React.useEffect(() => {
@@ -134,7 +134,7 @@ export default function EnrollCourse(props) {
               >
                 {courses2?.map((course) => (
                     <MenuItem key={course.id} value={course.id}>
-                      {"Kategoria: " + course.category_details + "  " + format(new Date(course.start_date), 'dd.MM.yyyy HH:mm')}
+                      {"Kategoria: " + course.category_details + "  " + format(new Date(course.start_date.replace('Z', '')), 'dd.MM.yyyy HH:mm')}
                     </MenuItem>
                   )
                 )

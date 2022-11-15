@@ -17,6 +17,13 @@ export const AuthProvider = ({ children }) => {
       ? jwt_decode(localStorage.getItem("authTokens"))
       : null
   );
+
+  const [userData, setUserData] = useState(() =>
+    localStorage.getItem("userData")
+      ? localStorage.getItem("userData")
+      : {}
+  );
+
   const [loading, setLoading] = useState(true);
 
   const history = useHistory();
@@ -72,6 +79,7 @@ export const AuthProvider = ({ children }) => {
 
   const contextData = {
     user,
+    userData,
     setUser,
     authTokens,
     setAuthTokens,
