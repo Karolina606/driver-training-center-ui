@@ -134,13 +134,15 @@ const fetchLessons = async () => {
 
 const fetchStudentsDetails = async (student) => {
   console.log({student});
-     await axios.get('users/' + student.student, { headers })
+     await axios.get('users/' + student.student + "/name_of_user/", { headers })
      .then(resp => { 
        student['student_details'] = resp.data.first_name + " " + resp.data.last_name;
        console.log({student});
        setStudents2(students2 => [...students2, student]);
-     });
-     console.log({students2});
+     }).then(
+      console.log({students2})
+     );
+     
    }
 
    const fetchCourseDetails = async (course) => {

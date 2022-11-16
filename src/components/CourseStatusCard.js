@@ -2,6 +2,7 @@
 import { Container, Card, CardContent, Typography, IconButton, Grid } from '@mui/material';
 import { useState, useContext, useEffect } from 'react';
 import AuthContext from '../context/AuthContext';
+import UserDataContext from '../context/UserDataContext';
 import axios from 'axios';
 import { format } from 'date-fns';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -15,9 +16,10 @@ import DialogContext from '../context/DialogContex';
 import EditCourseStatus from './forms/EditCourseStatus';
 
 const CourseStatusCard = (props) => {
-    const { authTokens, setUser, setAuthTokens } = useContext(AuthContext);
+    const { authTokens, setUser, setAuthTokens, userData, setUserData } = useContext(AuthContext);
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
     const [open, setOpen] = useState(false);
+    // const { userData, setUserData } = useContext(UserDataContext);
 
     const [course, setCourse] = useState({});
     const [student, setStudent] = useState({});
@@ -41,11 +43,10 @@ const CourseStatusCard = (props) => {
     }
 
     const fetchStudent = async (student_id) => {
-        await axios.get('users/' + student_id, { headers })
+        await axios.get('users/' + student_id + "/name_of_user/", { headers })
             .then(resp => {
                 // student['student_details'] = resp.data.first_name + " " + resp.data.last_name;
                 console.log({ student });
-                // setStudent(resp.data + { 'student_details': resp.data.first_name + " " + resp.data.last_name });
                 setStudent(resp.data);
                 setStudentDetails(resp.data.username + ": " + resp.data.first_name + " " + resp.data.last_name);
             });
@@ -116,6 +117,7 @@ const CourseStatusCard = (props) => {
                             </Typography>
                         </Grid>
 
+                        {userData?.groups?.includes("student")  == false ?
                         <Grid item xs={2} sx={{ m: "auto" }} >
                             <IconButton aria-label="delete" size="large" sx={{ my: "auto" }} onClick={handleDelete}>
                                 <DeleteIcon />
@@ -125,15 +127,22 @@ const CourseStatusCard = (props) => {
                                 <EditIcon />
                             </IconButton>
                         </Grid>
+                        :
+                        <></>
+                        }
                     </Grid>
                 </CardContent>
 
             </Card>
         </Container>
 
-        <DialogContext.Provider value={[open, setOpen]}>
-            <EditCourseStatus updateCourseStatuses={props.updateCourseStatuses} courseStatusToEdit={props.courseStatus}/>
-        </DialogContext.Provider>
+        {userData?.groups?.includes("student")  == false ?
+            <DialogContext.Provider value={[open, setOpen]}>
+                <EditCourseStatus updateCourseStatuses={props.updateCourseStatuses} courseStatusToEdit={props.courseStatus}/>
+            </DialogContext.Provider>
+            :
+            <></>
+        }
     </>
 }
 

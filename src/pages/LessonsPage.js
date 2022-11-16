@@ -9,10 +9,12 @@ import AddIcon from '@mui/icons-material/Add';
 import DialogContext from "../context/DialogContex";
 import AddCourse from "../components/forms/AddCourse";
 import { useState } from "react";
+import UserDataContext from "../context/UserDataContext";
 
 
 const LessonsPage = () => {
   const [open, setOpen] = useState(false);
+  const { userData, setUserData } = useContext(AuthContext);
     const { response, loading, error } = useAxios({
         method: 'get',
         url: 'lessons'
@@ -47,14 +49,21 @@ const LessonsPage = () => {
             <LessonCard lesson={lesson} updateLessons={updateLessons}/>
         ))}
 
-    <Fab color="primary" aria-label="add" sx={{ position: 'fixed', bottom: 16, right: 16 }} onClick={handleClickOpen}>
-      <AddIcon />
-    </Fab>
     </section>
 
-    <DialogContext.Provider value={[open, setOpen]}>
-      <AddLesson updateLessons={updateLessons}/>
-    </DialogContext.Provider>
+    {userData?.groups?.includes("student") == false ?
+      <>
+        <Fab color="primary" aria-label="add" sx={{ position: 'fixed', bottom: 16, right: 16 }} onClick={handleClickOpen}>
+          <AddIcon />
+        </Fab>
+
+        <DialogContext.Provider value={[open, setOpen]}>
+          <AddLesson updateLessons={updateLessons}/>
+        </DialogContext.Provider>
+      </>
+      :
+      <></>
+    }
   </>
   );
 };

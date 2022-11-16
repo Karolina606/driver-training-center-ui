@@ -9,10 +9,12 @@ import DialogContext from "../context/DialogContex";
 import AddCourse from "../components/forms/AddCourse";
 import { useState } from "react";
 import CourseStatusCard from "../components/CourseStatusCard";
+import UserDataContext from "../context/UserDataContext";
 
 
 const CourseStatusesPage = () => { 
   const [open, setOpen] = useState(false);
+  const { userData, setUserData } = useContext(AuthContext);
   const { response, loading, error } = useAxios({
     method: 'get',
     url: 'student_course_status'
@@ -41,11 +43,15 @@ const CourseStatusesPage = () => {
     };
 
 
-
+console.log({userData});
   return (<>
     <section>
-      <h1>Kursanci:</h1>
-
+      { userData?.groups?.includes("student") === true ?
+        <h1>Status twoich kursów:</h1>
+        :
+        <h1>Kursanci:</h1>
+      }
+      
       {courseStatuses?.map((courseStatus) => (
         <CourseStatusCard courseStatus={courseStatus} updateCourseStatuses={updateCourseStatuses} />
       ))}

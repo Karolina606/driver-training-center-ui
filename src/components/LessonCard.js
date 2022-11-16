@@ -6,6 +6,7 @@ import { useContext, useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import UserDataContext from '../context/UserDataContext';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -15,7 +16,7 @@ import DialogContext from '../context/DialogContex';
 import AddLesson from './forms/AddLesson';
 
 const LessonCard = (props) => {
-    const { authTokens, setUser, setAuthTokens } = useContext(AuthContext);
+    const { authTokens, setUser, setAuthTokens, userData, setUserData } = useContext(AuthContext);
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
     const [open, setOpen] = useState(false);
 
@@ -40,7 +41,7 @@ const LessonCard = (props) => {
     }
 
     const fetchStudentsDetails = async (student) => {
-         await axios.get('users/' + student.student_id, { headers })
+         await axios.get('users/' + student.student_id + "/name_of_user/", { headers })
          .then(resp => { 
            student['student_details'] = resp.data.first_name + " " + resp.data.last_name;
            console.log({student});
@@ -114,14 +115,20 @@ const LessonCard = (props) => {
                             </Typography>
                         </Grid>
 
-                        <Grid item xs={2} sx={{ m: "auto" }} >
-                            <IconButton aria-label="delete" size="large" sx={{ my: "auto" }} onClick={handleDelete}>
-                                <DeleteIcon />
-                            </IconButton>
-                            <IconButton aria-label="edit" size="large" sx={{ my: "auto" }} onClick={handleEdit}>
-                                <EditIcon />
-                            </IconButton>
-                        </Grid>
+
+                        {userData?.groups?.includes("student") == false ?
+                            <Grid item xs={2} sx={{ m: "auto" }} >
+                                <IconButton aria-label="delete" size="large" sx={{ my: "auto" }} onClick={handleDelete}>
+                                    <DeleteIcon />
+                                </IconButton>
+                                <IconButton aria-label="edit" size="large" sx={{ my: "auto" }} onClick={handleEdit}>
+                                    <EditIcon />
+                                </IconButton>
+                            </Grid>
+                            :
+                            <></>
+                        }
+
                     </Grid>
 
                 </CardContent>
@@ -145,9 +152,12 @@ const LessonCard = (props) => {
             </Card>
         </Container>
 
-        <DialogContext.Provider value={[open, setOpen]}>
-            <AddLesson updateLessons={props.updateLessons} lessonToEdit={props.lesson}/>
-        </DialogContext.Provider>
+        {userData?.groups?.includes("student") == false ?
+            <DialogContext.Provider value={[open, setOpen]}>
+                <AddLesson updateLessons={props.updateLessons} lessonToEdit={props.lesson}/>
+            </DialogContext.Provider> :
+            <></>
+        }
     </>
 }
 

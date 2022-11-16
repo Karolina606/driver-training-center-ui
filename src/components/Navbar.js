@@ -16,7 +16,6 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import UserDataContext from "../context/UserDataContext";
 
 const pagesAdmin = [
     <Button textAlign="center" component={Link} to="/users">
@@ -68,9 +67,8 @@ const Navbar = () => {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [selectedUserOption, setSelectedUserOption] = React.useState(-1);
-    const { user, logoutUser } = useContext(AuthContext);
+    const { user, logoutUser, userData, setUserData } = useContext(AuthContext);
     const history = useHistory();
-    const { userData, setUserData } = useContext(UserDataContext);
 
 
     const handleOpenNavMenu = (event) => {
@@ -96,6 +94,7 @@ const Navbar = () => {
             history.push('/user-profile');
         } else if (selectedUserOption === 3) {
             console.log({ user })
+            setUserData({});
             logoutUser();
         }
         handleCloseUserMenu();
@@ -117,18 +116,27 @@ const Navbar = () => {
         console.log({userData});
         var pages;
 
-        if (userData?.groups?.includes("http://127.0.0.1:8000/groups/1/")){
+        if (userData?.groups?.includes("admin")){
             pages = pagesAdmin;
-        }else if (userData?.groups?.includes("http://127.0.0.1:8000/groups/2/")){
+        }else if (userData?.groups?.includes("instructor")){
             pages = pagesInstructor;
         }else{
             pages = pagesStudent;
         }
+
+        // if (userData?.groups?.includes("http://127.0.0.1:8000/groups/1/")){
+        //     pages = pagesAdmin;
+        // }else if (userData?.groups?.includes("http://127.0.0.1:8000/groups/2/")){
+        //     pages = pagesInstructor;
+        // }else{
+        //     pages = pagesStudent;
+        // }
+
         menu_variants =
             <>
                 {pages?.map((page) => (
                     <MenuItem key={page} onClick={handleCloseNavMenu}>
-                        {page}
+                        <Typography textAlign="center">{page}</Typography>
                     </MenuItem>
                 ))}
             </>

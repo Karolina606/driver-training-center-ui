@@ -96,8 +96,8 @@ function App() {
             <main>
                 <Router>
                     <div className="flex flex-col min-h-screen overflow-hidden">
+                    {/* <UserDataContext.Provider value={value}> */}
                         <AuthProvider>
-                        <UserDataContext.Provider value={value}>
                         <ThemeProvider theme={darkTheme}>
                              <Navbar />
                                 <CssBaseline />
@@ -106,9 +106,18 @@ function App() {
                                       <PrivateRoute component={ProtectedPage} path="/protected" exact />
                                       <Route component={Login} path="/login"/>
                                       <Route component={Register} path="/register" />
-                                      <PrivateRoute component={UsersPage} path="/users" />
-                                      <PrivateRoute component={CoursesPage} path="/courses" />
-                                      <PrivateRoute component={CategoriesPage} path="/categories" />
+                                      {/* { userData?.groups?.includes("http://127.0.0.1:8000/groups/1/") ?
+                                         <> */}
+                                          <PrivateRoute component={UsersPage} path="/users" />
+                                          <PrivateRoute component={CategoriesPage} path="/categories" />
+                                        {/* </> : <></>
+                                      }
+                                      { userData?.groups?.includes("http://127.0.0.1:8000/groups/1/") ||
+                                        userData?.groups?.includes("http://127.0.0.1:8000/groups/2/") ? */}
+                                          <PrivateRoute component={CoursesPage} path="/courses" /> 
+                                          {/* : <></>
+                                       } */}
+
                                       <PrivateRoute component={LessonsPage} path="/lessons" />
                                       <PrivateRoute component={UserPage} path="/user-profile" />
                                       <PrivateRoute component={CourseStatusesPage} path="/course-statuses" />
@@ -118,8 +127,8 @@ function App() {
                                 </Container>
                                 <Footer />
                             </ThemeProvider>
-                            </UserDataContext.Provider>
                         </AuthProvider>
+                        {/* </UserDataContext.Provider> */}
                         
                     </div>
                 </Router>

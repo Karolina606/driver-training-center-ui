@@ -32,7 +32,7 @@ const CourseCard = (props) => {
     }
 
     const fetchStudentsDetails = async (student) => {
-         await axios.get('users/' + student.student_id, { headers })
+         await axios.get('users/' + student.student_id + "/name_of_user/", { headers })
          .then(resp => { 
            student['student_details'] = resp.data.first_name + " " + resp.data.last_name;
            console.log({student});
