@@ -149,7 +149,7 @@ const fetchStudentsDetails = async (student) => {
     // headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
     await axios.get(course.driving_license_category, { headers })
      .then(resp => { 
-       course['course_details'] = resp.data.name + " T:" + resp.data.theory_full_time + " P:" + resp.data.practice_full_time + ", " + format(new Date(course.start_date), 'dd.MM.yyyy HH:mm');
+       course['course_details'] = resp.data.name + " T:" + resp.data.theory_full_time + " P:" + resp.data.practice_full_time + ", " + format(new Date(course.start_date.replace(':00Z', '').replace('T', ', ')), 'dd.MM.yyyy HH:mm');
        setCourses2([...courses2, course]);
      });
    }
