@@ -53,7 +53,6 @@ export default function EnrollCourse(props) {
 
   const [course, setCourse] = React.useState([]);
   const [courses, setCourses] = React.useState([]);
-
   const [courses2, setCourses2] = React.useState([]);
 
 
@@ -61,17 +60,19 @@ export default function EnrollCourse(props) {
     setOpen(false);
   };
 
-  const fetchCourses = () => {
-    axios.get('/courses/', { headers }).then(resp => { setCourses(resp.data) });
+  const fetchCourses = async () => {
+    await axios.get('/courses/', { headers }).then(resp => {console.log({resp}); setCourses(resp.data); console.log({courses})});
   }
 
   const [category, setCategory] = React.useState("");
 
-  const fetchCategory = async (course) => {
-   await axios.get(course.driving_license_category, { headers })
+  const fetchCategory = async (course1) => {
+   await axios.get(course1.driving_license_category, { headers })
     .then(resp => { 
-      course['category_details'] = resp.data.name + " T:" + resp.data.theory_full_time + " P:" + resp.data.practice_full_time;
-      setCourses2([...courses2, course]);
+      course1['category_details'] = resp.data.name + " T:" + resp.data.theory_full_time + " P:" + resp.data.practice_full_time;
+      console.log({courses2});
+      console.log({course1});
+      setCourses2([...courses2, course1]);
     });
   }
 
@@ -103,7 +104,7 @@ export default function EnrollCourse(props) {
       },
       headers);
     setOpen(false);
-    window.location.reload(false);
+    // window.location.reload(false);
   };
 
   React.useEffect(() => {
@@ -111,8 +112,8 @@ export default function EnrollCourse(props) {
   }, []);
 
   React.useEffect(() => {
-    courses?.forEach( course => {
-      fetchCategory(course);
+    courses?.forEach( (course1) => {
+      fetchCategory(course1);
     });
   }, [courses]);
 
@@ -132,9 +133,9 @@ export default function EnrollCourse(props) {
                 label="course"
                 onChange={e => setCourse(e.target.value)}
               >
-                {courses2?.map((course) => (
-                    <MenuItem key={course.id} value={course.id}>
-                      {"Kategoria: " + course.category_details + "  " + format(new Date(course.start_date), 'dd.MM.yyyy HH:mm')}
+                {courses?.map((course1) => (
+                    <MenuItem key={course1.id} value={course1.id}>
+                      {"Kategoria: " + course1.category_details + "  " + format(new Date(course1.start_date.replace('Z', '')), 'dd.MM.yyyy HH:mm')}
                     </MenuItem>
                   )
                 )

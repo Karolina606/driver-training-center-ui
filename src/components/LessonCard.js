@@ -5,15 +5,20 @@ import AuthContext from '../context/AuthContext';
 import { useContext, useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import UserDataContext from '../context/UserDataContext';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import DialogContext from '../context/DialogContex';
+import AddLesson from './forms/AddLesson';
 
 const LessonCard = (props) => {
-    const { authTokens, setUser, setAuthTokens } = useContext(AuthContext);
+    const { authTokens, setUser, setAuthTokens, userData, setUserData } = useContext(AuthContext);
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
+    const [open, setOpen] = useState(false);
 
     const [instructor, setInstructor] = useState("");
     const [course, setCourse] = useState("");
@@ -24,9 +29,7 @@ const LessonCard = (props) => {
     const [students2, setStudents2] = useState([]);
 
     const fetchInstructor = (userId) => {
-        const controller = new AbortController();
-        axios.get("/users/" + props.lesson.instructor, { headers }).then(resp => { setInstructor(resp.data.first_name + " " + resp.data.last_name) });
-        controller.abort();
+        axios.get( 'users/' + props.lesson.instructor + "/name_of_user/", { headers }).then(resp => { setInstructor(resp.data.first_name + " " + resp.data.last_name) });
     }
 
     const fetchCourse = (courseId) => {
@@ -38,7 +41,7 @@ const LessonCard = (props) => {
     }
 
     const fetchStudentsDetails = async (student) => {
-         await axios.get('users/' + student.student_id, { headers })
+         await axios.get('users/' + student.student_id + "/name_of_user/", { headers })
          .then(resp => { 
            student['student_details'] = resp.data.first_name + " " + resp.data.last_name;
            console.log({student});
@@ -56,20 +59,38 @@ const LessonCard = (props) => {
         fetchCourseStatus(props.lesson.id);
     }, []);
 
+
     useEffect(() => {
+        fetchInstructor(props.lesson.instructor);
+        // fetchCourse(props.lesson.course);
+        // fetchCourseStatus(props.lesson.id);
+    }, [props]);
+
+    useEffect(() => {
+        // setStudents2([]);
         courseStatus?.forEach(student => {
             fetchStudentsDetails(student);
         });
     }, [courseStatus]);
+    
+    const handleEdit = () => {
+        setOpen(true);
+      };
+    
+      const handleClose = () => {
+        setOpen(false);
+      };
 
     const handleDelete = async e => {
         e.preventDefault();
         console.log({ props });
         console.log({ headers });
 
-        await axios.delete("lessons/" + props.lesson.id + '/', { headers });
-        fetchLessons();
+        await axios.delete("lessons/" + props.lesson.id + '/', { headers }).then(e => {
+            fetchLessons();
+        });
     };
+
 
     return <>
         <Container maxWidth="sm" sx={{ mt: "2rem", px: "1rem" }}>
@@ -94,18 +115,27 @@ const LessonCard = (props) => {
                             </Typography>
                         </Grid>
 
-                        <Grid item xs={2} sx={{ m: "auto" }} >
-                            <IconButton aria-label="delete" size="large" sx={{ my: "auto" }} onClick={handleDelete}>
-                                <DeleteIcon />
-                            </IconButton>
-                        </Grid>
+
+                        {userData?.groups?.includes("student") == false ?
+                            <Grid item xs={2} sx={{ m: "auto" }} >
+                                <IconButton aria-label="delete" size="large" sx={{ my: "auto" }} onClick={handleDelete}>
+                                    <DeleteIcon />
+                                </IconButton>
+                                <IconButton aria-label="edit" size="large" sx={{ my: "auto" }} onClick={handleEdit}>
+                                    <EditIcon />
+                                </IconButton>
+                            </Grid>
+                            :
+                            <></>
+                        }
+
                     </Grid>
 
                 </CardContent>
 
                 <Accordion>
                         <AccordionSummary sx={{ px: "2rem", background:"#ffb300", color:"black" }}
-                            expandIcon={<ExpandMoreIcon />}
+                            expandIcon={<ExpandMoreIcon sx={{color:"black"}} />}
                             aria-controls="panel1a-content"
                             id="panel1a-header"
                         >
@@ -121,6 +151,13 @@ const LessonCard = (props) => {
                     </Accordion>
             </Card>
         </Container>
+
+        {userData?.groups?.includes("student") == false ?
+            <DialogContext.Provider value={[open, setOpen]}>
+                <AddLesson updateLessons={props.updateLessons} lessonToEdit={props.lesson}/>
+            </DialogContext.Provider> :
+            <></>
+        }
     </>
 }
 

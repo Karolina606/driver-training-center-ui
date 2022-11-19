@@ -17,7 +17,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 
-const pages = [
+const pagesAdmin = [
     <Button textAlign="center" component={Link} to="/users">
         Użytkownicy
     </Button>,
@@ -29,8 +29,33 @@ const pages = [
     </Button>,
     <Button textAlign="center" component={Link} to="/categories">
         Kategorie
+    </Button>,
+    <Button textAlign="center" component={Link} to="/course-statuses">
+        Kursanci
     </Button>
 ];
+
+const pagesInstructor = [
+    <Button textAlign="center" component={Link} to="/courses">
+        Kursy
+    </Button>,
+    <Button textAlign="center" component={Link} to="/lessons">
+        Lekcje
+    </Button>,
+    <Button textAlign="center" component={Link} to="/course-statuses">
+        Kursanci
+    </Button>
+];
+
+const pagesStudent = [
+    <Button textAlign="center" component={Link} to="/lessons">
+        Lekcje
+    </Button>,
+    <Button textAlign="center" component={Link} to="/course-statuses">
+        Status
+    </Button>
+];
+
 const settings = [
     <Button textAlign="center" component={Link} to="/user-profile">
         Profile
@@ -42,6 +67,7 @@ const Navbar = () => {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [selectedUserOption, setSelectedUserOption] = React.useState(-1);
+    const { user, logoutUser, userData, setUserData } = useContext(AuthContext);
     const history = useHistory();
 
 
@@ -68,6 +94,7 @@ const Navbar = () => {
             history.push('/user-profile');
         } else if (selectedUserOption === 3) {
             console.log({ user })
+            setUserData({});
             logoutUser();
         }
         handleCloseUserMenu();
@@ -81,18 +108,35 @@ const Navbar = () => {
         setSelectedUserOption(index);
     }
 
-    const { user, logoutUser } = useContext(AuthContext);
-
 
     let menu_variants;
     if (user == null) {
         menu_variants = <></>
     } else {
+        console.log({userData});
+        var pages;
+
+        if (userData?.groups?.includes("admin")){
+            pages = pagesAdmin;
+        }else if (userData?.groups?.includes("instructor")){
+            pages = pagesInstructor;
+        }else{
+            pages = pagesStudent;
+        }
+
+        // if (userData?.groups?.includes("http://127.0.0.1:8000/groups/1/")){
+        //     pages = pagesAdmin;
+        // }else if (userData?.groups?.includes("http://127.0.0.1:8000/groups/2/")){
+        //     pages = pagesInstructor;
+        // }else{
+        //     pages = pagesStudent;
+        // }
+
         menu_variants =
             <>
                 {pages?.map((page) => (
                     <MenuItem key={page} onClick={handleCloseNavMenu}>
-                        {page}
+                        <Typography textAlign="center">{page}</Typography>
                     </MenuItem>
                 ))}
             </>
@@ -115,7 +159,7 @@ const Navbar = () => {
                     <Tooltip title="Open settings">
 
                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                            <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                            <Avatar alt={user.username} src="/static/images/avatar/2.jpg" />
                         </IconButton>
 
                     </Tooltip>

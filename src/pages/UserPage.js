@@ -11,7 +11,7 @@ const UserPage = () => {
 
   const { response, loading, error } = useAxios({
       method: 'get',
-      url: 'users/' + user.user_id
+      url: 'users/' + user?.user_id
   });
 
   useEffect(() => {

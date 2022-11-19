@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import "./index.css";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
@@ -21,6 +21,8 @@ import CoursesPage from "./pages/CoursesPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import LessonsPage from "./pages/LessonsPage";
 import { AlignHorizontalCenter } from "@mui/icons-material";
+import CourseStatusesPage from "./pages/CourseStatusesPage";
+import UserDataContext from "./context/UserDataContext";
 
 const darkTheme = createTheme({
   palette: {
@@ -87,10 +89,14 @@ palette: {
 });
 
 function App() {
+  const [userData, setUserData] = useState({});
+  const value = { userData, setUserData };
+
     return ( <div className="App">
             <main>
                 <Router>
                     <div className="flex flex-col min-h-screen overflow-hidden">
+                    {/* <UserDataContext.Provider value={value}> */}
                         <AuthProvider>
                         <ThemeProvider theme={darkTheme}>
                              <Navbar />
@@ -100,11 +106,21 @@ function App() {
                                       <PrivateRoute component={ProtectedPage} path="/protected" exact />
                                       <Route component={Login} path="/login"/>
                                       <Route component={Register} path="/register" />
-                                      <Route component={UsersPage} path="/users" />
-                                      <Route component={CoursesPage} path="/courses" />
-                                      <Route component={CategoriesPage} path="/categories" />
-                                      <Route component={LessonsPage} path="/lessons" />
-                                      <Route component={UserPage} path="/user-profile" />
+                                      {/* { userData?.groups?.includes("http://127.0.0.1:8000/groups/1/") ?
+                                         <> */}
+                                          <PrivateRoute component={UsersPage} path="/users" />
+                                          <PrivateRoute component={CategoriesPage} path="/categories" />
+                                        {/* </> : <></>
+                                      }
+                                      { userData?.groups?.includes("http://127.0.0.1:8000/groups/1/") ||
+                                        userData?.groups?.includes("http://127.0.0.1:8000/groups/2/") ? */}
+                                          <PrivateRoute component={CoursesPage} path="/courses" /> 
+                                          {/* : <></>
+                                       } */}
+
+                                      <PrivateRoute component={LessonsPage} path="/lessons" />
+                                      <PrivateRoute component={UserPage} path="/user-profile" />
+                                      <PrivateRoute component={CourseStatusesPage} path="/course-statuses" />
                                       <Route component={Home} path="/" />
                                   </Switch>
                                   
@@ -112,6 +128,7 @@ function App() {
                                 <Footer />
                             </ThemeProvider>
                         </AuthProvider>
+                        {/* </UserDataContext.Provider> */}
                         
                     </div>
                 </Router>

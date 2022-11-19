@@ -16,7 +16,7 @@ const CourseCard = (props) => {
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
 
     const [category, setCategory] = useState("");
-    const start_date = props.course.start_date;
+    const start_date = props.course.start_date.replace('Z', '');
     const id = props.course.id;
 
     const [students, setStudents] = useState([]);
@@ -32,7 +32,7 @@ const CourseCard = (props) => {
     }
 
     const fetchStudentsDetails = async (student) => {
-         await axios.get('users/' + student.student_id, { headers })
+         await axios.get('users/' + student.student_id + "/name_of_user/", { headers })
          .then(resp => { 
            student['student_details'] = resp.data.first_name + " " + resp.data.last_name;
            console.log({student});
@@ -100,7 +100,7 @@ const CourseCard = (props) => {
 
                 <Accordion>
                     <AccordionSummary sx={{ px: "2rem", background:"#ffb300", color:"black" }}
-                        expandIcon={<ExpandMoreIcon />}
+                        expandIcon={<ExpandMoreIcon sx={{color:"black"}}/>}
                         aria-controls="panel1a-content"
                         id="panel1a-header"
                     >

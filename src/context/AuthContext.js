@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
 
 const AuthContext = createContext();
 
@@ -17,6 +18,13 @@ export const AuthProvider = ({ children }) => {
       ? jwt_decode(localStorage.getItem("authTokens"))
       : null
   );
+
+  const [userData, setUserData] = useState(() =>
+    localStorage.getItem("userData")
+      ? localStorage.getItem("userData")
+      : {}
+  );
+
   const [loading, setLoading] = useState(true);
 
   const history = useHistory();
@@ -43,6 +51,37 @@ export const AuthProvider = ({ children }) => {
       alert("Something went wrong!");
     }
   };
+
+  const fetchUserData = async () =>{
+    const headers = { Authorization: `Bearer ${authTokens?.access}` };
+    await axios.get( 'users/' + user?.user_id, { headers })
+      .then(resp => {
+        setUserData(resp.data);
+        localStorage.setItem("userData", resp.data);
+        console.log({resp});
+      });
+    }
+
+  useEffect(() => {
+    fetchUserData();
+  }, [user]);
+
+    const fetchGroups = async (groups) => {
+      const headers = { Authorization: `Bearer ${authTokens?.access}` };
+      console.log({groups});
+        groups?.forEach(group => {
+          axios.get(group, {headers}).then(resp => {
+            setUserData({...userData, 'groups': resp.data.name}) 
+            // setUserData({...userData, 'groups': resp.data.name}) 
+          });
+          console.log({userData});
+          localStorage.setItem("userData", userData);
+        });  
+    }
+
+    useEffect(() => {
+      fetchGroups(userData?.groups);
+    }, [userData]);
   
   const registerUser = async (username, password, password2) => {
     const response = await fetch("http://127.0.0.1:8000/accounts/register/", {
@@ -72,12 +111,14 @@ export const AuthProvider = ({ children }) => {
 
   const contextData = {
     user,
+    userData,
     setUser,
     authTokens,
     setAuthTokens,
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    setUserData
   };
 
   useEffect(() => {
