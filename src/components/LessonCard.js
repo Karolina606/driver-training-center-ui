@@ -21,19 +21,26 @@ const LessonCard = (props) => {
     const [open, setOpen] = useState(false);
 
     const [instructor, setInstructor] = useState("");
-    const [course, setCourse] = useState("");
+    const [course, setCourse] = useState([]);
     const type = props.lesson.type;
     const start_date = props.lesson.start_date.replace('Z', '');
     const end_date = props.lesson.end_date.replace('Z', '');
     const [courseStatus, setCourseStatus] = useState([]);
     const [students2, setStudents2] = useState([]);
+    const [course2, setCourse2] = useState([]);
 
-    const fetchInstructor = (userId) => {
-        axios.get( 'users/' + props.lesson.instructor + "/name_of_user/", { headers }).then(resp => { setInstructor(resp.data.first_name + " " + resp.data.last_name) });
+    const fetchInstructor = async (userId) => {
+        if( userId !== undefined){
+            await axios.get( 'users/' + userId + "/name_of_user/", { headers }).then(resp => { setInstructor(resp.data.first_name + " " + resp.data.last_name) });
+            console.log(props);
+        }
     }
 
-    const fetchCourse = (courseId) => {
-        axios.get("/courses/" + courseId, { headers }).then(resp => { setCourse(resp.data.id + " " + format(new Date(resp.data.start_date.replace('Z', '')), 'dd.MM.yyyy, HH:mm')) });
+    const fetchCourse = async (courseId) => {
+        if(courseId !== undefined){
+            await axios.get("/courses/" + courseId, { headers }).then(resp => { console.log({resp}); setCourse( resp.data) });
+        }
+        // console.log({course});
     }
 
     const fetchCourseStatus = (lesson_id) => {
@@ -53,17 +60,42 @@ const LessonCard = (props) => {
         await axios.get("/lessons/", { headers }).then(resp => {props.updateLessons(resp.data) });
     }
 
+    const fetchCourseDetails = async (course) => {
+        // headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
+        console.log({course});
+        await axios.get(course.driving_license_category, { headers })
+         .then(resp => { 
+           course['course_details'] = resp.data.name +  ", " + format(new Date(course.start_date.replace(':00Z', '').replace('T', ', ')), 'dd.MM.yyyy HH:mm');
+           setCourse2([...course2, course]);
+         });
+       }
+
     useEffect(() => {
-        fetchInstructor(props.lesson.instructor);
-        fetchCourse(props.lesson.course);
-        fetchCourseStatus(props.lesson.id);
+        var instructorId;
+        if (props.lesson.instructor !== undefined){
+            instructorId = props.lesson.instructor;
+        }else{
+            instructorId = props.lesson.instructor_id;
+        }
+        fetchInstructor(instructorId);
+
+        var courseId;
+        if (props.lesson.course !== undefined){
+            courseId = props.lesson.course;
+        }else{
+            courseId = props.lesson.course_id;
+        }
+        fetchCourse(courseId);
+
+        fetchCourseStatus(props.lesson?.id);
     }, []);
 
 
     useEffect(() => {
-        fetchInstructor(props.lesson.instructor);
+        fetchInstructor(props.lesson?.instructor);
         // fetchCourse(props.lesson.course);
         // fetchCourseStatus(props.lesson.id);
+        console.log({props});
     }, [props]);
 
     useEffect(() => {
@@ -72,6 +104,11 @@ const LessonCard = (props) => {
             fetchStudentsDetails(student);
         });
     }, [courseStatus]);
+
+    useEffect(() => {
+         fetchCourseDetails(course);
+        console.log({course});
+    }, [course]);
     
     const handleEdit = () => {
         setOpen(true);
@@ -93,13 +130,13 @@ const LessonCard = (props) => {
 
 
     return <>
-        <Container maxWidth="sm" sx={{ mt: "2rem", px: "1rem" }}>
+        <Container maxWidth="sm" sx={{ mt: "2rem", px: "1rem" }} className={props.isArchived}>
             <Card sx={{ minWidth: 130 }}>
                 <CardContent sx={{px: "2rem" }}>
                     <Grid container spacing={2}>
                         <Grid item xs={10}>
                             <Typography variant="h7" component="div">
-                                Kurs: {course}
+                                Kurs: {course.course_details}
                             </Typography>
                             <Typography color="text.secondary">
                                 Instruktor: {instructor}
@@ -116,7 +153,7 @@ const LessonCard = (props) => {
                         </Grid>
 
 
-                        {userData?.groups?.includes("student") == false ?
+                        {userData?.groups?.includes("student") === false && props.isArchived !== "archived" ?
                             <Grid item xs={2} sx={{ m: "auto" }} >
                                 <IconButton aria-label="delete" size="large" sx={{ my: "auto" }} onClick={handleDelete}>
                                     <DeleteIcon />
