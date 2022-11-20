@@ -35,7 +35,13 @@ const darkTheme = createTheme({
     },
     third: {
       main: '#f4511e',
+    },
+    archived: {
+      backgroundColor: '#fffff',
     }
+    // background: {
+    //   default: "#e4f0e2"
+    // }
   },
 
   breakpoints: {

@@ -14,6 +14,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import DialogContext from '../context/DialogContex';
 import EditCourseStatus from './forms/EditCourseStatus';
+import CircularProgressWithLabel from './CircularProgressWithLabel';
 
 const CourseStatusCard = (props) => {
     const { authTokens, setUser, setAuthTokens, userData, setUserData } = useContext(AuthContext);
@@ -30,6 +31,7 @@ const CourseStatusCard = (props) => {
     const [categoryDetails, setCategoryDetails] = useState("");
 
     const [courseStatuses, setCourseStatuses] = useState([]);
+    const [courseProgress, setCourseProgress] = useState({});
 
 
 
@@ -53,7 +55,11 @@ const CourseStatusCard = (props) => {
     }
 
     const fetchCategory = (category) => {
-        axios.get(category, { headers }).then(resp => { setCategoryDetails(resp.data.name + " T:" + resp.data.theory_full_time + " P:" + resp.data.practice_full_time) });
+        axios.get(category, { headers }).then(resp => { setCategoryDetails(resp.data) });
+    }
+
+    const fetchCourseStatusesProgress = async (statusId) => {
+        await axios.get('/student_course_status/' + statusId + '/get_progress' , { headers }).then(resp => { console.warn({resp}); setCourseProgress(resp.data) });
     }
 
     useEffect(() => {
@@ -67,6 +73,10 @@ const CourseStatusCard = (props) => {
     useEffect(() => {
         fetchCategory(course.driving_license_category);
     }, [course]);
+
+    useEffect(() => {
+            fetchCourseStatusesProgress(props.courseStatus.id)
+    }, []);
 
 
     const handleEdit = () => {
@@ -96,8 +106,8 @@ const CourseStatusCard = (props) => {
                             <Typography variant="h6" component="div" sx={{ mb: 0.5, color: '#ffb300'}}>
                                 {studentDetails}
                             </Typography>
-                            <Typography color="text.secondary">
-                                Kurs: {categoryDetails}
+                            <Typography >
+                                Kurs: {categoryDetails.name + " T:" + categoryDetails.theory_full_time + " P:" + categoryDetails.practice_full_time}
                             </Typography>
                             <Typography color="text.secondary">
                                 {/* Data rozpoczęcia: {courseDetails !== undefined ? format(new Date(courseDetails), 'dd.MM.yyyy HH:mm'): "date"} */}
@@ -130,6 +140,24 @@ const CourseStatusCard = (props) => {
                         :
                         <></>
                         }
+                    </Grid>
+
+                    <Grid container spacing={2}>
+                        <Grid container item xs={6} sx={{ my: "1rem" }} direction="column" alignItems="center" justifyContent="center">
+                            <Typography component="div" sx={{ mb: "1rem" }}>
+                                Teoria:
+                            </Typography>
+                            <CircularProgressWithLabel value={courseProgress.theory_perc} percentage={courseProgress.theory_perc}/>
+                            <CircularProgressWithLabel value={courseProgress.theory_perc} hours={ {'done':courseProgress.theory, 'full': categoryDetails.theory_full_time} } />
+                        </Grid>
+
+                        <Grid container item xs={6} sx={{ my: "1rem" }} direction="column" alignItems="center" justifyContent="center" >
+                            <Typography component="div" sx={{ mb: "1rem" }}>
+                                Praktyka:
+                            </Typography>
+                            <CircularProgressWithLabel value={courseProgress.practice_perc} percentage={courseProgress.practice_perc}  sx={{ mb: "1rem" }}/>
+                            <CircularProgressWithLabel value={courseProgress.practice_perc} hours={ {'done':courseProgress.practice, 'full': categoryDetails.practice_full_time } } />
+                        </Grid>
                     </Grid>
                 </CardContent>
 
