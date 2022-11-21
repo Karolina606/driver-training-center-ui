@@ -15,11 +15,13 @@ import EditIcon from '@mui/icons-material/Edit';
 import DialogContext from '../context/DialogContex';
 import EditCourseStatus from './forms/EditCourseStatus';
 import CircularProgressWithLabel from './CircularProgressWithLabel';
+import ToastContext from "../context/ToastContex";
 
 const CourseStatusCard = (props) => {
     const { authTokens, setUser, setAuthTokens, userData, setUserData } = useContext(AuthContext);
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
     const [open, setOpen] = useState(false);
+    const { toastState, setToastState } = useContext(ToastContext);
     // const { userData, setUserData } = useContext(UserDataContext);
 
     const [course, setCourse] = useState({});
@@ -92,7 +94,13 @@ const CourseStatusCard = (props) => {
         // console.log({ id });
         // console.log({ headers });
 
-        await axios.delete("student_course_status/" + props.courseStatus.id, { headers }).then(e => {
+        await axios.delete("student_course_status/" + props.courseStatus.id, { headers }).then(resp => {
+            if(resp.status === 204) {
+                setToastState({'isOpen': true, 'type':'success', 'message': 'Popranie usunięto status przebiegu kursu'});
+              }else {
+                setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+              }
+
             fetchCourseStatuses();
         });
     };

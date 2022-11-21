@@ -3,11 +3,13 @@ import UserInfo from "./UserPage";
 import AuthContext from "../context/AuthContext";
 import UserDataContext from "../context/UserDataContext";
 import axios from "axios";
+import ToastContext from "../context/ToastContex";
 
 const Home = () => {
   // const { user } = useContext(AuthContext);
   const { authTokens, user, userData, setUserData } = useContext(AuthContext);
   const headers = { Authorization: `Bearer ${authTokens?.access}` };
+  const { toastState, setToastState } = useContext(ToastContext);
   // const { userData, setUserData } = useContext(UserDataContext);
 
   // const fetchUserData = async () =>{

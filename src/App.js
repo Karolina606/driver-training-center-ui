@@ -23,6 +23,15 @@ import LessonsPage from "./pages/LessonsPage";
 import { AlignHorizontalCenter } from "@mui/icons-material";
 import CourseStatusesPage from "./pages/CourseStatusesPage";
 import UserDataContext from "./context/UserDataContext";
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import ToastContext from "./context/ToastContex";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const darkTheme = createTheme({
   palette: {
@@ -96,13 +105,29 @@ palette: {
 
 function App() {
   const [userData, setUserData] = useState({});
-  const value = { userData, setUserData };
+
+  // const [openToast, setOpenToast] = React.useState(false);
+  const [toastState, setToastState] = React.useState({'isOpen': false, 'type':'success', 'message': 'success'});
+  const value = {toastState, setToastState};
+
+
+  const handleClick = () => {
+    setToastState({...toastState, 'isOpen': true});
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setToastState({...toastState, 'isOpen': false});
+  };
 
     return ( <div className="App">
             <main>
                 <Router>
                     <div className="flex flex-col min-h-screen overflow-hidden">
-                    {/* <UserDataContext.Provider value={value}> */}
+                    <ToastContext.Provider value={value} >
                         <AuthProvider>
                         <ThemeProvider theme={darkTheme}>
                              <Navbar />
@@ -132,9 +157,16 @@ function App() {
                                   
                                 </Container>
                                 <Footer />
+
+                                <Snackbar open={toastState.isOpen} autoHideDuration={3000} onClose={handleClose}>
+                                  <Alert onClose={handleClose} severity={toastState.type} sx={{ width: '100%' }}>
+                                    {toastState.message}
+                                  </Alert>
+                                </Snackbar>
+
                             </ThemeProvider>
                         </AuthProvider>
-                        {/* </UserDataContext.Provider> */}
+                        </ToastContext.Provider>
                         
                     </div>
                 </Router>

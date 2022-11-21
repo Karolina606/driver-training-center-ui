@@ -10,6 +10,7 @@ import AddCourse from "../components/forms/AddCourse";
 import { useState } from "react";
 import CourseStatusCard from "../components/CourseStatusCard";
 import UserDataContext from "../context/UserDataContext";
+import ToastContext from "../context/ToastContex";
 
 
 const CourseStatusesPage = () => { 
@@ -19,6 +20,7 @@ const CourseStatusesPage = () => {
     method: 'get',
     url: 'student_course_status'
   });
+  const { toastState, setToastState } = useContext(ToastContext);
 
   const [courseStatuses, setCourseStatuses] = useState([]);
 

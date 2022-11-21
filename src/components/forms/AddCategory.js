@@ -10,6 +10,7 @@ import DialogContext from '../../context/DialogContex';
 import {makeStyles } from '@material-ui/core';
 import axios from 'axios';
 import AuthContext from '../../context/AuthContext';
+import ToastContext from '../../context/ToastContex';
 
 
 const useStyles = makeStyles(theme => ({
@@ -34,6 +35,7 @@ export default function AddCategory(props) {
   const [open, setOpen] = React.useContext(DialogContext);
   const { authTokens, setUser, setAuthTokens } = React.useContext(AuthContext);
   const headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
+  const { toastState, setToastState } = React.useContext(ToastContext);
 
   const classes = useStyles();
 
@@ -57,7 +59,15 @@ export default function AddCategory(props) {
         "theory_full_time": dialogTheory, 
         "practice_full_time": dialogPractice
       },
-      headers);
+      headers).then(resp => {
+        if(resp.status === 201) {
+          setToastState({'isOpen': true, 'type':'success', 'message': 'Dodano nową kategorię'});
+        }else {
+          setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+        }
+      }).catch((error) => {
+        setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'})
+      });;
       setOpen(false);
       window.location.reload(false);
   };

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import {useState, useContext, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -25,6 +25,7 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import pl from 'date-fns/locale/pl';
 import { integerPropType } from '@mui/utils';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import ToastContext from '../../context/ToastContex';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -57,32 +58,33 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function AddLesson(props) {
-  const [open, setOpen] = React.useContext(DialogContext);
-  const { authTokens, setUser, setAuthTokens } = React.useContext(AuthContext);
+  const [open, setOpen] = useContext(DialogContext);
+  const { authTokens, setUser, setAuthTokens } = useContext(AuthContext);
   var headers = { Authorization: `Bearer ${authTokens?.access}` };
   const classes = useStyles();
+  const { toastState, setToastState } = useContext(ToastContext);
 
 
-  const [instructor, setInstructor] =  React.useState([]);
-  const [instructors, setInstructors] =  React.useState([]);
+  const [instructor, setInstructor] =  useState([]);
+  const [instructors, setInstructors] =  useState([]);
 
-  const [course, setCourse] =  React.useState([]);
-  const [courses, setCourses] =  React.useState([]);
+  const [course, setCourse] =  useState([]);
+  const [courses, setCourses] =  useState([]);
 
-  const [type, setType] =  React.useState([]);
-  const [types, setTypes] =  React.useState([{name:'Teoria', value:'T'}, {name:'Praktyka', value:'P'}]);
+  const [type, setType] =  useState([]);
+  const [types, setTypes] =  useState([{name:'Teoria', value:'T'}, {name:'Praktyka', value:'P'}]);
 
-  const [startDate, setStartDate] = React.useState(dayjs(now.toString()));
-  const [endDate, setEndDate] = React.useState(dayjs(now.toString()));
+  const [startDate, setStartDate] = useState(dayjs(now.toString()));
+  const [endDate, setEndDate] = useState(dayjs(now.toString()));
 
-  const [selectedStudents, setSelectedStudents] =  React.useState([]);
-  const [students, setStudents] =  React.useState([]);
-  const [students2, setStudents2] = React.useState([]);
-  const [courses2, setCourses2] = React.useState([]);
+  const [selectedStudents, setSelectedStudents] =  useState([]);
+  const [students, setStudents] =  useState([]);
+  const [students2, setStudents2] = useState([]);
+  const [courses2, setCourses2] = useState([]);
 
   const lessonToEdit = props.lessonToEdit;
 
-  React.useEffect(() => {
+  useEffect(() => {
     console.log({lessonToEdit});
     if(lessonToEdit !== undefined ){
       setInstructor(lessonToEdit.instructor);
@@ -128,7 +130,7 @@ const fetchStudents = () => {
 }
 
 const fetchLessons = async () => {
-  await axios.get("/lessons/", { headers }).then(resp => { props.updateLessons(resp.data) });
+  await axios.get("/lessons/", { headers }).then((resp) => { props.updateLessons(resp.data) });
 }
 
 
@@ -197,7 +199,14 @@ const fetchStudentsDetails = async (student) => {
         },
         headers).then(resp => {
           addLessonToStudentStatus(resp.data.id);
-        });
+          if(resp.status === 201) {
+            setToastState({'isOpen': true, 'type':'success', 'message': 'Dodano nową lekcję'});
+          }else {
+            setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+          }
+        }).catch((error) => {
+          setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'})
+        });;
       }else{
         console.log({lessonToEdit});
         console.log({instructor});
@@ -213,7 +222,14 @@ const fetchStudentsDetails = async (student) => {
             "end_date": formatData(endDate)
         },
         headers).then(resp => {
+          if(resp.status === 200) {
+            setToastState({'isOpen': true, 'type':'success', 'message': 'Poprawnie edytowano lekcję'});
+          }else {
+            setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+          }
           addLessonToStudentStatus(lessonToEdit.id);
+        }).catch((error) => {
+          setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'})
         });
       }
       setOpen(false);
@@ -222,8 +238,14 @@ const fetchStudentsDetails = async (student) => {
 
   const addLessonToStudentStatus = async (lesson_id) => {
     await selectedStudents.forEach(student_id => {
-        axios.post("/student_course_status/" + student_id + "/add_lesson_to_stu_course/" + lesson_id + "/", {}, headers);
-    });
+        axios.post("/student_course_status/" + student_id + "/add_lesson_to_stu_course/" + lesson_id + "/", {}, headers).then(resp => {
+          if(resp.status === 200) {
+            setToastState({'isOpen': true, 'type':'success', 'message': 'Popranie dodano kursanta do lekcji'});
+          }else {
+            setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak podczas dodawania kursanta!'});
+          }
+        });
+    })
   }
 
   const handleStudentChange = (event) => {
@@ -235,14 +257,14 @@ const fetchStudentsDetails = async (student) => {
     );
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchInstructors();
     fetchCourses();
     fetchStudents();
 }, []);
 
 
-React.useEffect(() => {
+useEffect(() => {
     students?.forEach(student => {
         fetchStudentsDetails(student);
     });
@@ -252,7 +274,7 @@ React.useEffect(() => {
     });
 }, [students, courses]);
 
-React.useEffect(() => {
+useEffect(() => {
   fetchLessons();
 }, [open]);
 

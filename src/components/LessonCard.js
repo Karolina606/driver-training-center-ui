@@ -14,11 +14,13 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DialogContext from '../context/DialogContex';
 import AddLesson from './forms/AddLesson';
+import ToastContext from "../context/ToastContex";
 
 const LessonCard = (props) => {
     const { authTokens, setUser, setAuthTokens, userData, setUserData } = useContext(AuthContext);
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
     const [open, setOpen] = useState(false);
+    const { toastState, setToastState } = useContext(ToastContext);
 
     const [instructor, setInstructor] = useState("");
     const [course, setCourse] = useState([]);
@@ -28,6 +30,7 @@ const LessonCard = (props) => {
     const [courseStatus, setCourseStatus] = useState([]);
     const [students2, setStudents2] = useState([]);
     const [course2, setCourse2] = useState([]);
+    const [refresh, setRefresh] = useState(false);
 
     const fetchInstructor = async (userId) => {
         if( userId !== undefined){
@@ -56,7 +59,7 @@ const LessonCard = (props) => {
          });
        }
 
-       const fetchLessons = async () => {
+    const fetchLessons = async () => {
         await axios.get("/lessons/", { headers }).then(resp => {props.updateLessons(resp.data) });
     }
 
@@ -123,11 +126,21 @@ const LessonCard = (props) => {
         console.log({ props });
         console.log({ headers });
 
-        await axios.delete("lessons/" + props.lesson.id + '/', { headers }).then(e => {
-            fetchLessons();
+        await axios.delete("lessons/" + props.lesson.id + '/', { headers }).then(resp => {
+            if(resp.status === 204) {
+                setToastState({'isOpen': true, 'type':'success', 'message': 'Poprawnie usunięto lekcję'});
+              }else {
+                setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+              }
         });
+        setRefresh(true);
     };
 
+    useEffect(() => {
+        fetchLessons();
+        setRefresh(false);
+        console.warn(refresh);
+   }, [refresh]);
 
     return <>
         <Container maxWidth="sm" sx={{ mt: "2rem", px: "1rem" }} className={props.isArchived}>

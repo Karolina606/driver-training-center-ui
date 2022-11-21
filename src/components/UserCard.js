@@ -17,6 +17,7 @@ import EditUserDialogForm from './forms/EditUserForm';
 import { makeStyles } from '@material-ui/core';
 import EnrollCourse from './forms/EnrollCourse';
 import { purple, red } from '@mui/material/colors';
+import ToastContext from "../context/ToastContex";
 
 
 const useStyles = makeStyles(theme => ({
@@ -43,6 +44,8 @@ const UserCard = (props) => {
   const { user, logoutUser } = useContext(AuthContext);
   const { authTokens, setUser, setAuthTokens } = useContext(AuthContext);
   var headers = { Authorization: `Bearer ${authTokens?.access}` };
+  const { toastState, setToastState } = useContext(ToastContext);
+  const [refresh, setRefresh] = useState(false);
 
   const { response, loading, error } = useAxios({
     method: 'get',
@@ -58,8 +61,11 @@ const UserCard = (props) => {
         axios.get(group, {headers}).then(resp => {setGroupNames([...groupsNames ,resp.data.name]) });
         console.log({groupsNames});
       });
-      
   }
+
+  const fetchUsers = async () => {
+    await axios.get("/users/", { headers }).then(resp => {props.updateUsers(resp.data)});
+}
 
   const username = props.user.username;
   const email = props.user.email;
@@ -89,6 +95,49 @@ const UserCard = (props) => {
     fetchGroups(groups);
   }, []);
 
+
+  const grand_admin = async () => {
+    headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
+    await axios.post('/users/' + user_id + '/grand_admin/', {}, headers).then(resp => {
+      if(resp.status === 200) {
+        setToastState({'isOpen': true, 'type':'success', 'message': 'Poprawnie dodano rolę admina'});
+      }else {
+        setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+      }
+    });
+    setRefresh(true);
+  };
+
+  const grand_instructor = async () => {
+    headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
+    await axios.post('/users/' + user_id + '/grand_instructor/', {}, headers).then(resp => {
+      if(resp.status === 200) {
+        setToastState({'isOpen': true, 'type':'success', 'message': 'Poprawnie dodano rolę instruktora'});
+      }else {
+        setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+      }
+    });
+    setRefresh(true);
+  };
+
+  const grand_student = async () => {
+    headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
+    await axios.post('/users/' + user_id + '/grand_student/', {}, headers).then(resp => {
+      console.warn({resp})
+      if(resp.status === 200) {
+        setToastState({'isOpen': true, 'type':'success', 'message': 'Poprawnie dodano rolę kursanta'});
+      }else {
+        setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+      }
+    });
+    setRefresh(true);
+  };
+
+  useEffect(() => {
+    fetchUsers();
+    setRefresh(false);
+  }, [refresh]);
+
   return <>
     <Container maxWidth="md" sx={{ mt: "2rem", px: "1rem" }}>
       <Card sx={{ minWidth: 130, p: "1rem" }}>
@@ -109,11 +158,8 @@ const UserCard = (props) => {
         {response?.groups.includes("http://127.0.0.1:8000/groups/1/") ?
         <>
           <ButtonGroup variant="contained" aria-label="outlined primary button group">
-            <Button onClick={e => {
-              headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
-              axios.post('/users/' + user_id + '/grand_student/', {}, headers);
-              window.location.reload(false);
-            }} 
+            <Button onClick={e => {grand_student(); // window.location.reload(false); 
+              }} 
             disabled={groups.includes("http://127.0.0.1:8000/groups/3/")}>
               {groups.includes("http://127.0.0.1:8000/groups/3/") ?
                 <>
@@ -127,9 +173,8 @@ const UserCard = (props) => {
             </Button>
 
             <Button onClick={e => {
-              headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
-              axios.post('/users/' + user_id + '/grand_instructor/', {}, headers);
-              window.location.reload(false);
+              grand_instructor();
+              // window.location.reload(false);
             }}
             disabled={groups.includes("http://127.0.0.1:8000/groups/2/")}>
               {groups.includes("http://127.0.0.1:8000/groups/2/") ?
@@ -144,9 +189,8 @@ const UserCard = (props) => {
             </Button>
 
             <Button onClick={e => {
-              headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
-              axios.post('/users/' + user_id + '/grand_admin/', {}, headers);
-              window.location.reload(false)
+              grand_admin();
+              // window.location.reload(false);
               }}
               disabled={groups.includes("http://127.0.0.1:8000/groups/1/")}>
               {groups.includes("http://127.0.0.1:8000/groups/1/") ?
