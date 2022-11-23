@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Register() {
-  const [username, setUsername] = useState("");
+  // const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -34,10 +34,10 @@ function Register() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    console.log({ username })
+    // console.log({ username })
     console.log({ password })
     console.log({ password2 })
-    registerUser(username, password, password2);
+    registerUser(email, firstName, lastName, password, password2);
   };
 
 
@@ -103,13 +103,20 @@ function Register() {
         </FormControl>
       </FormGroup> */}
             <form className={classes.root} onSubmit={handleSubmit}>
-              <TextField
+            <TextField
+                label="Email"
+                variant="outlined"
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              />
+              {/* <TextField
                 label="Nazwa użytkownika"
                 variant="outlined"
                 required
                 value={username}
                 onChange={e => setUsername(e.target.value)}
-              />
+              /> */}
               <TextField
                 label="Imie"
                 variant="outlined"
@@ -122,13 +129,13 @@ function Register() {
                 value={lastName}
                 onChange={e => setLastName(e.target.value)}
               />
-              <TextField
+              {/* <TextField
                 label="Email"
                 variant="outlined"
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-              />
+              /> */}
               <TextField
                 label="Hasło"
                 variant="outlined"

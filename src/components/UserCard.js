@@ -96,9 +96,9 @@ const UserCard = (props) => {
   }, []);
 
 
-  const grand_admin = async () => {
+  const grant_admin = async () => {
     headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
-    await axios.post('/users/' + user_id + '/grand_admin/', {}, headers).then(resp => {
+    await axios.post('/users/' + user_id + '/grant_admin/', {}, headers).then(resp => {
       if(resp.status === 200) {
         setToastState({'isOpen': true, 'type':'success', 'message': 'Poprawnie dodano rolę admina'});
       }else {
@@ -108,9 +108,9 @@ const UserCard = (props) => {
     setRefresh(true);
   };
 
-  const grand_instructor = async () => {
+  const grant_instructor = async () => {
     headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
-    await axios.post('/users/' + user_id + '/grand_instructor/', {}, headers).then(resp => {
+    await axios.post('/users/' + user_id + '/grant_instructor/', {}, headers).then(resp => {
       if(resp.status === 200) {
         setToastState({'isOpen': true, 'type':'success', 'message': 'Poprawnie dodano rolę instruktora'});
       }else {
@@ -120,9 +120,9 @@ const UserCard = (props) => {
     setRefresh(true);
   };
 
-  const grand_student = async () => {
+  const grant_student = async () => {
     headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
-    await axios.post('/users/' + user_id + '/grand_student/', {}, headers).then(resp => {
+    await axios.post('/users/' + user_id + '/grant_student/', {}, headers).then(resp => {
       console.warn({resp})
       if(resp.status === 200) {
         setToastState({'isOpen': true, 'type':'success', 'message': 'Poprawnie dodano rolę kursanta'});
@@ -158,7 +158,7 @@ const UserCard = (props) => {
         {response?.groups.includes("http://127.0.0.1:8000/groups/1/") ?
         <>
           <ButtonGroup variant="contained" aria-label="outlined primary button group">
-            <Button onClick={e => {grand_student(); // window.location.reload(false); 
+            <Button onClick={e => {grant_student(); // window.location.reload(false); 
               }} 
             disabled={groups.includes("http://127.0.0.1:8000/groups/3/")}>
               {groups.includes("http://127.0.0.1:8000/groups/3/") ?
@@ -167,13 +167,13 @@ const UserCard = (props) => {
                 </>
                 :
                 <>
-                  Grand student
+                  Grant student
                 </>
               }
             </Button>
 
             <Button onClick={e => {
-              grand_instructor();
+              grant_instructor();
               // window.location.reload(false);
             }}
             disabled={groups.includes("http://127.0.0.1:8000/groups/2/")}>
@@ -183,13 +183,13 @@ const UserCard = (props) => {
                 </>
                 :
                 <>
-                  Grand instructor
+                  Grant instructor
                 </>
               }
             </Button>
 
             <Button onClick={e => {
-              grand_admin();
+              grant_admin();
               // window.location.reload(false);
               }}
               disabled={groups.includes("http://127.0.0.1:8000/groups/1/")}>
@@ -199,7 +199,7 @@ const UserCard = (props) => {
                 </>
                 :
                 <>
-                  Grand admin
+                  Grant admin
                 </>
               }
             </Button>

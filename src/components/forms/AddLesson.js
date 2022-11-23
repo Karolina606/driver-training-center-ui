@@ -82,17 +82,23 @@ export default function AddLesson(props) {
   const [students2, setStudents2] = useState([]);
   const [courses2, setCourses2] = useState([]);
 
+  const [lessons, setLessons] = useState([]);
+  // const [lessonToEdit, setLessonToEdit] = useState();
+
   const lessonToEdit = props.lessonToEdit;
 
   useEffect(() => {
     console.log({lessonToEdit});
     if(lessonToEdit !== undefined ){
+    //   setLessonToEdit(props.lessonToEdit);
+    //   var kkkkk = props.lessonToEdit;
+    //  console.warn({kkkkk});
+
       setInstructor(lessonToEdit.instructor);
       setCourse(lessonToEdit.course);
       setType(lessonToEdit.type);
       const start = formatDateFromDatabase(lessonToEdit.start_date);
       setStartDate(start);
-      
       const end = formatDateFromDatabase(lessonToEdit.end_date);
       setEndDate(end);
     console.log({end});
@@ -100,7 +106,6 @@ export default function AddLesson(props) {
     }
     
   },[]);
-  
 
 
   const handleChangeStartDate = (newValue) => {
@@ -125,24 +130,29 @@ export default function AddLesson(props) {
     axios.get('/courses/',  {headers}).then(resp => {setCourses(resp.data)});
 }
 
-const fetchStudents = () => {
-  axios.get('/student_course_status/', {headers}).then(resp => {setStudents(resp.data)});
+const fetchStudents = async (courseId) => {
+  await axios.get('/student_course_status/' + courseId + '/get_by_course_id/', {headers}).then(resp => {setStudents(resp.data)});
 }
 
 const fetchLessons = async () => {
-  await axios.get("/lessons/", { headers }).then((resp) => { props.updateLessons(resp.data) });
+  await axios.get("/lessons/", { headers }).then((resp) => { props.updateLessons(resp.data); setLessons(resp.data) });
+}
+
+const fetchNewStudentsForLesson = async () => {
+  await axios.get("/student_course_status/" + lessonToEdit.id + "/get_by_lesson_id/", {headers}).then(resp => { props.updateStudents2(resp)});
 }
 
 
 const fetchStudentsDetails = async (student) => {
   console.log({student});
-     await axios.get('users/' + student.student + "/name_of_user/", { headers })
+     await axios.get('users/' + student.student_id + "/name_of_user/", { headers })
      .then(resp => { 
        student['student_details'] = resp.data.first_name + " " + resp.data.last_name;
        console.log({student});
        setStudents2(students2 => [...students2, student]);
-     }).then(
-      console.log({students2})
+     }).finally(() => {
+      console.log({students2});
+     }
      );
      
    }
@@ -198,7 +208,7 @@ const fetchStudentsDetails = async (student) => {
             "end_date": formatData(endDate)
         },
         headers).then(resp => {
-          addLessonToStudentStatus(resp.data.id);
+          addLessonToStudentStatus(resp.data);
           if(resp.status === 201) {
             setToastState({'isOpen': true, 'type':'success', 'message': 'Dodano nową lekcję'});
           }else {
@@ -206,7 +216,7 @@ const fetchStudentsDetails = async (student) => {
           }
         }).catch((error) => {
           setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'})
-        });;
+        });
       }else{
         console.log({lessonToEdit});
         console.log({instructor});
@@ -227,7 +237,7 @@ const fetchStudentsDetails = async (student) => {
           }else {
             setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
           }
-          addLessonToStudentStatus(lessonToEdit.id);
+          addLessonToStudentStatus(lessonToEdit);
         }).catch((error) => {
           setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'})
         });
@@ -236,17 +246,34 @@ const fetchStudentsDetails = async (student) => {
   };
 
 
-  const addLessonToStudentStatus = async (lesson_id) => {
-    await selectedStudents.forEach(student_id => {
-        axios.post("/student_course_status/" + student_id + "/add_lesson_to_stu_course/" + lesson_id + "/", {}, headers).then(resp => {
+  const addLessonToStudentStatus = async (lesson) => {
+    selectedStudents.forEach((student_id) =>  {
+       axios.post("/student_course_status/" + student_id + "/add_lesson_to_stu_course/" + lesson.id + "/", {}, headers).then(resp => {
+        // console.warn({resp});
           if(resp.status === 200) {
-            setToastState({'isOpen': true, 'type':'success', 'message': 'Popranie dodano kursanta do lekcji'});
+            setToastState({'isOpen': true, 'type':'success', 'message': 'Poprawnie dodano kursanta do lekcji'});
           }else {
             setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak podczas dodawania kursanta!'});
           }
+          // fetchLessons();
+          // fetchNewStudentsForLesson();
+          window.location.reload(false);
+          // setLessonToEdit(lesson);
         });
     })
   }
+
+  // useEffect(() => {
+  // //   var kkkkk = props.lessonToEdit;
+  // //    console.warn({kkkkk});
+  //       if(lessonToEdit.id !== undefined){
+  //         const id = lessonToEdit.id;
+  //          axios.get("/student_course_status/" + id + "/get_by_lesson_id/", {headers}).then(resp => {
+  //           props.updateStudents2(resp);
+  //         });
+  //       }
+  // }, [lessonToEdit]);
+
 
   const handleStudentChange = (event) => {
     const {
@@ -260,19 +287,31 @@ const fetchStudentsDetails = async (student) => {
   useEffect(() => {
     fetchInstructors();
     fetchCourses();
-    fetchStudents();
+    // fetchStudents();
 }, []);
+
+useEffect(() => {
+  setStudents2([]);
+  if(course !== undefined && course !== ""){
+    fetchStudents(course);
+  }
+  // console.warn({course});
+}, [course]);
+
 
 
 useEffect(() => {
     students?.forEach(student => {
         fetchStudentsDetails(student);
     });
-    courses?.forEach((course) => {
-      console.log({courses})
-      fetchCourseDetails(course);
-    });
-}, [students, courses]);
+}, [students]);
+
+useEffect(() => {
+  courses?.forEach((course) => {
+    console.log({courses})
+    fetchCourseDetails(course);
+  });
+}, [courses]);
 
 useEffect(() => {
   fetchLessons();

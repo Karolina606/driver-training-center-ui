@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import "./index.css";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, BrowserRouter } from "react-router-dom";
 import {ReactDOM, createRoot} from "react-dom/client";
 import PrivateRoute from "./utils/PrivateRoute";
 import { AuthProvider } from "./context/AuthContext";
@@ -20,7 +20,7 @@ import UserPage from "./pages/UserPage";
 import CoursesPage from "./pages/CoursesPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import LessonsPage from "./pages/LessonsPage";
-import { AlignHorizontalCenter } from "@mui/icons-material";
+import { AlignHorizontalCenter, SignalCellularNullSharp } from "@mui/icons-material";
 import CourseStatusesPage from "./pages/CourseStatusesPage";
 import UserDataContext from "./context/UserDataContext";
 import Stack from '@mui/material/Stack';
@@ -125,7 +125,7 @@ function App() {
 
     return ( <div className="App">
             <main>
-                <Router>
+            <Router>
                     <div className="flex flex-col min-h-screen overflow-hidden">
                     <ToastContext.Provider value={value} >
                         <AuthProvider>
@@ -137,22 +137,17 @@ function App() {
                                       <PrivateRoute component={ProtectedPage} path="/protected" exact />
                                       <Route component={Login} path="/login"/>
                                       <Route component={Register} path="/register" />
-                                      {/* { userData?.groups?.includes("http://127.0.0.1:8000/groups/1/") ?
-                                         <> */}
-                                          <PrivateRoute component={UsersPage} path="/users" />
-                                          <PrivateRoute component={CategoriesPage} path="/categories" />
-                                        {/* </> : <></>
-                                      }
-                                      { userData?.groups?.includes("http://127.0.0.1:8000/groups/1/") ||
-                                        userData?.groups?.includes("http://127.0.0.1:8000/groups/2/") ? */}
-                                          <PrivateRoute component={CoursesPage} path="/courses" /> 
-                                          {/* : <></>
-                                       } */}
+
+                                      <PrivateRoute component={UsersPage} path="/users" />
+                                      <PrivateRoute component={CategoriesPage} path="/categories" />
+                                      <PrivateRoute component={CoursesPage} path="/courses" /> 
 
                                       <PrivateRoute component={LessonsPage} path="/lessons" />
                                       <PrivateRoute component={UserPage} path="/user-profile" />
                                       <PrivateRoute component={CourseStatusesPage} path="/course-statuses" />
                                       <Route component={Home} path="/" />
+
+                                      
                                   </Switch>
                                   
                                 </Container>

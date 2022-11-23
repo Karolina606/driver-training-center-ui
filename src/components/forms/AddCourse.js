@@ -108,7 +108,7 @@ export default function AddCourse(props) {
           setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
         }
       }).catch((error) => {
-        setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!' + error.message})
+        setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'})
       });
       setOpen(false);
   };

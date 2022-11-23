@@ -31,14 +31,14 @@ const LoginPage = () => {
   const classes = useStyles();
   // create state variables for each input
   // const [username, setUsername] = useState('');
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = e => {
     e.preventDefault();
     // const username = e.target.username.value;
     // const password = e.target.password.value;
-    username.length > 0 && loginUser(username, password);
+    email.length > 0 && loginUser(email, password);
   };
 
 
@@ -59,11 +59,12 @@ const LoginPage = () => {
             <h1>Zaloguj się</h1>
             <form className={classes.root} onSubmit={handleSubmit}>
               <TextField
-                label="Nazwa użytkownika"
+                label="Email"
                 variant="outlined"
                 required
-                value={username}
-                onChange={e => setUsername(e.target.value)}
+                value={email}
+                type='email'
+                onChange={e => setEmail(e.target.value)}
               />
               <TextField
                 label="Hasło"

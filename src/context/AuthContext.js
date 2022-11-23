@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }) => {
       fetchGroups(userData?.groups);
     }, [userData]);
   
-  const registerUser = async (username, password, password2) => {
+  const registerUser = async (username, first_name, last_name, password, password2) => {
     const response = await fetch("http://127.0.0.1:8000/accounts/register/", {
       method: "POST",
       headers: {
@@ -99,6 +99,8 @@ export const AuthProvider = ({ children }) => {
       },
       body: JSON.stringify({
         username,
+        first_name,
+        last_name,
         password,
         password2
       })
@@ -107,8 +109,8 @@ export const AuthProvider = ({ children }) => {
       history.push("/login");
       setToastState({'isOpen': true, 'type':'success', 'message': 'Zarejestrowano poprawnie'});
     } else {
-      alert("Something went wrong!");
-      setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+      // alert("Something went wrong!");
+      setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak! Sprawdź poprawność wprowadzonych danych'});
     }
   };
 
