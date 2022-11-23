@@ -8,6 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DialogContext from "../context/DialogContex";
 import AddCourse from "../components/forms/AddCourse";
 import { useState } from "react";
+import ToastContext from "../context/ToastContex";
 
 
 const CoursesPage = () => { 
@@ -16,6 +17,7 @@ const CoursesPage = () => {
     method: 'get',
     url: 'courses'
   });
+  const { toastState, setToastState } = useContext(ToastContext);
 
   const [courses, setCourses] = useState([]);
 

@@ -2,23 +2,30 @@ import UserCard from "../components/UserCard";
 import UserInfo from "./UserPage";
 import AuthContext from "../context/AuthContext";
 
-import { useContext, useEffect } from "react";
-import useAxios, {baseURL} from '../utils/useAxios'
+import { useContext, useEffect, useState } from "react";
+import useAxios, {baseURL} from '../utils/useAxios';
+import ToastContext from "../context/ToastContex";
 
 
 const UsersPage = () => {
 
     const { user, logoutUser, authTokens } = useContext(AuthContext);
-
+    const { toastState, setToastState } = useContext(ToastContext);
 
     const { response, loading, error } = useAxios({
         method: 'get',
         url: 'users'
     });
+    const [users, setUsers] = useState([]);
+
+    const updateUsers= (newValues) => {
+      setUsers(newValues);
+    }
 
     useEffect(() => {
         if(response !== null ){
             console.log({response});
+            updateUsers(response);
         }
       }, [response]);
 
@@ -28,8 +35,8 @@ const UsersPage = () => {
       {/* {user && <UserInfo user={user} />} */}
       <h1>Użytkownicy:</h1>
 
-         {response?.map((user1) => (
-            <UserCard user={user1}></UserCard>
+         {users?.map((user1) => (
+            <UserCard user={user1} updateUsers={updateUsers}></UserCard>
         ))}
     </section>
   );

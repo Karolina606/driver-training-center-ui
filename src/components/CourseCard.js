@@ -10,10 +10,12 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ToastContext from "../context/ToastContex";
 
 const CourseCard = (props) => {
     const { authTokens, setUser, setAuthTokens } = useContext(AuthContext);
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
+    const { toastState, setToastState } = useContext(ToastContext);
 
     const [category, setCategory] = useState("");
     const start_date = props.course.start_date.replace('Z', '');
@@ -72,7 +74,13 @@ const CourseCard = (props) => {
         console.log({ id });
         console.log({ headers });
 
-        await axios.delete("courses/" + id, { headers });
+        await axios.delete("courses/" + id, { headers }).then(resp => {
+            if(resp.status === 204) {
+                setToastState({'isOpen': true, 'type':'success', 'message': 'Poprawnie usunięto kurs'});
+              }else {
+                setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+              }
+        });
         fetchCourses();
     };
 

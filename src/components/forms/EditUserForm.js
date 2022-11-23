@@ -8,6 +8,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContext from '../../context/DialogContex';
 import {makeStyles } from '@material-ui/core';
+import ToastContext from '../../context/ToastContex';
 
 
 const useStyles = makeStyles(theme => ({
@@ -32,6 +33,7 @@ export default function EditUserDialogForm(props) {
   // const [open, setOpen] = React.useState(props.open);
   // const [open] = useContext(DialogContex);
   const [open, setOpen] = React.useContext(DialogContext);
+  const { toastState, setToastState } = React.useContext(ToastContext);
 
 
   // React.useEffect(() => {
@@ -50,6 +52,7 @@ export default function EditUserDialogForm(props) {
   const [dialogFirstName, setFirstName] = React.useState('');
   const [dialogLastName, setLastName] = React.useState('');
   const [dialogEmail, setEmail] = React.useState('');
+  
 
   const handleSubmit = async e => {
     e.preventDefault();

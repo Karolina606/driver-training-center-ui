@@ -24,6 +24,7 @@ import { format } from 'date-fns';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import pl from 'date-fns/locale/pl';
 import { integerPropType } from '@mui/utils';
+import ToastContext from '../../context/ToastContex';
 
 
 
@@ -53,6 +54,7 @@ export default function AddCourse(props) {
   const [startDate, setStartDate] = React.useState(dayjs(now.toString()));
   const [categories, setCategories] =  React.useState([]);
   const classes = useStyles();
+  const { toastState, setToastState } = React.useContext(ToastContext);
 
   const handleChangeDate = (newValue) => {
     setStartDate(newValue);
@@ -93,14 +95,22 @@ export default function AddCourse(props) {
     setStartDate(formatData(startDate));
     console.log({startDate});
 
-    await axios.post("courses/",
-    {
-      "driving_license_category": dialogCategory,
-      "start_date": formatData(startDate)
-    },
-    headers);
-      setOpen(false);
 
+      await axios.post("courses/",
+      {
+        "driving_license_category": dialogCategory,
+        "start_date": formatData(startDate)
+      },
+      headers).then(resp => {
+        if(resp.status === 201) {
+          setToastState({'isOpen': true, 'type':'success', 'message': 'Dodano nową kurs'});
+        }else {
+          setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+        }
+      }).catch((error) => {
+        setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'})
+      });
+      setOpen(false);
   };
 
   React.useEffect(() => {

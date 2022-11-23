@@ -56,11 +56,7 @@ const pagesStudent = [
     </Button>
 ];
 
-const settings = [
-    <Button textAlign="center" component={Link} to="/user-profile">
-        Profile
-    </Button>
-    , 'Account', 'Dashboard', 'Logout'];
+
 
 const Navbar = () => {
 
@@ -87,16 +83,23 @@ const Navbar = () => {
         setAnchorElUser(null);
     };
 
+    const settings = [
+        <Button textAlign="center" component={Link} to="/user-profile">
+            Profile
+        </Button>,
+        <Button textAlign="center" component={Link} onClick={e => {
+            setUserData({});
+            logoutUser();
+        }}>
+            Wyloguj
+        </Button>
+    ];
 
     useEffect(() => {
         console.log({ selectedUserOption });
         if (selectedUserOption === 0) {
             history.push('/user-profile');
-        } else if (selectedUserOption === 3) {
-            console.log({ user })
-            setUserData({});
-            logoutUser();
-        }
+        } 
         handleCloseUserMenu();
         setSelectedUserOption(-1);
 
@@ -120,7 +123,7 @@ const Navbar = () => {
             pages = pagesAdmin;
         }else if (userData?.groups?.includes("instructor")){
             pages = pagesInstructor;
-        }else{
+        }else if (userData?.groups?.includes("student")){
             pages = pagesStudent;
         }
 

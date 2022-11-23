@@ -35,7 +35,7 @@ export default function CircularProgressWithLabel(props) {
           justifyContent: 'center',
         }}
       >
-        <Typography variant="caption" component="div" color="text.secondary" minWidth="70px" >
+        <Typography variant="caption" component="div" color="text.secondary">
           {type_progress}
         </Typography>
       </Box>

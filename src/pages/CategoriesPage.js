@@ -7,6 +7,7 @@ import { Fab } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import DialogContext from "../context/DialogContex";
 import AddCategory from "../components/forms/AddCategory";
+import ToastContext from "../context/ToastContex";
 
 
 const CategoriesPage = () => {
@@ -17,6 +18,7 @@ const CategoriesPage = () => {
         method: 'get',
         url: 'driving_license_categories'
     });
+    const { toastState, setToastState } = useContext(ToastContext);
 
     const updateCategories = (newValues) => {
       setCategories(newValues);

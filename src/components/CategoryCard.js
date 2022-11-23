@@ -4,6 +4,7 @@ import { Container, Card, CardContent, Typography, IconButton, Grid } from '@mui
 import DeleteIcon from '@mui/icons-material/Delete';
 import AuthContext from "../context/AuthContext";
 import axios from 'axios';
+import ToastContext from "../context/ToastContex";
 
 
 const CategoryCard = (props) => {
@@ -13,6 +14,7 @@ const CategoryCard = (props) => {
     const id = props.category.id;
     const { authTokens } = useContext(AuthContext);
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
+    const { toastState, setToastState } = useContext(ToastContext);
   
     const fetchCategories = async () => {
         await axios.get("/driving_license_categories/", { headers }).then(resp => { props.updateCategories(resp.data) });
@@ -24,7 +26,13 @@ const CategoryCard = (props) => {
         console.log({id});
         console.log({headers});
 
-        await axios.delete("driving_license_categories/" + id, {headers});
+        await axios.delete("driving_license_categories/" + id, {headers}).then(resp => {
+            if(resp.status === 204) {
+                setToastState({'isOpen': true, 'type':'success', 'message': 'Poprawnie usunięto kategorię'});
+              }else {
+                setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+              }
+        });
         fetchCategories();
     };
 

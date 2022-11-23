@@ -28,6 +28,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import ToastContext from '../../context/ToastContex';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -81,8 +82,7 @@ export default function EditCourseStatus(props) {
 
   const [courses, setCourses] = useState([]);
   const [courses2, setCourses2] = useState([]);
-
-
+  const { toastState, setToastState } = useContext(ToastContext);
 
   const courseStatusToEdit = props.courseStatusToEdit;
 
@@ -153,7 +153,15 @@ export default function EditCourseStatus(props) {
             "is_internal_theoretical_exam_passed": isTheoryPassed,
             "is_internal_practical_exam_passed": isPracticPassed
         },
-        headers);
+        headers).then(resp => {
+          if(resp.status === 200) {
+            setToastState({'isOpen': true, 'type':'success', 'message': 'Poprawnie edytowano status'});
+          }else {
+            setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+          }
+        }).catch((error) => {
+          setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'})
+        });;
       }
       setOpen(false);
   };

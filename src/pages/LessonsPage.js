@@ -16,6 +16,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Typography } from '@mui/material';
 import axios from "axios";
+import ToastContext from "../context/ToastContex";
 
 
 const LessonsPage = () => {
@@ -26,8 +27,13 @@ const LessonsPage = () => {
         method: 'get',
         url: 'lessons'
     });
+    const { toastState, setToastState } = useContext(ToastContext);
+
     const [lessons, setLessons] = useState([]);
+    const [lessonsByDate, setLessonsByDate] = useState({});
+    const [dates, setDates] = useState([]);
     const [finishedLessons, setFinishedLessons] = useState([]);
+    const weekday = ["Niedziela","Poniedziałek","Wtorek","Środa","Czwartek","Piątek","Sobota"];
 
     const updateLessons = (newValues) => {
       setLessons(newValues);
@@ -49,6 +55,35 @@ const LessonsPage = () => {
         fetchFinishedLessons();
       }, [response]);
 
+
+    useEffect(() => {
+      lessons?.forEach((lesson) => {
+        const date = lesson.start_date.split('T')[0];
+
+        if(lessonsByDate[date] === undefined){
+          lessonsByDate[date] = [lesson];
+        }else{
+          var currentIds = [];
+          lessonsByDate[date].forEach((lesson) => currentIds.push(lesson.id));
+
+          if( currentIds.indexOf(lesson.id) === -1){
+            lessonsByDate[date].push(lesson);
+          }
+          console.log({lessonsByDate});
+        }
+        setLessonsByDate(lessonsByDate);
+
+
+        var k = setDates(Object.keys(lessonsByDate));
+        console.log({dates});
+
+        var l = lessonsByDate[date];
+        console.warn({l});
+      });
+      console.warn({lessonsByDate});
+
+    }, [lessons]);
+
       const handleClickOpen = () => {
         setOpen(true);
       };
@@ -66,15 +101,26 @@ const LessonsPage = () => {
             <LessonCard lesson={lesson} updateLessons={updateLessons} isArchived={""}/>
         ))}
 
+        {/* {dates?.map((date) => (
+          <>
+            <Typography sx={{mt:"3rem"}}>{weekday[(new Date(date)).getDay()]}, {date}</Typography >
+            
+              {lessonsByDate[date]?.map((lesson) => (
+              <LessonCard lesson={lesson} updateLessons={updateLessons} isArchived={""}/>
+              ))}
+          </>
+          )
+        )} */}
+
       <Accordion sx={{boxShadow: "none" , backgroundImage: "none"}}>
-          <AccordionSummary sx={{ px: "2rem", mt: "4rem"}}
+          <AccordionSummary sx={{ mt: "4rem"}}
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
           >
               <Typography>Zakończone lekcje:</Typography>
           </AccordionSummary>
-          <AccordionDetails sx={{ px: "2rem"}}>
+          <AccordionDetails>
               {finishedLessons?.map((lesson) => (
               <LessonCard lesson={lesson} updateLessons={updateLessons} isArchived={"archived"}/>
           ))}

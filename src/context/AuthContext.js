@@ -1,13 +1,15 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 import jwt_decode from "jwt-decode";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+import ToastContext from "../context/ToastContex";
 
 const AuthContext = createContext();
 
 export default AuthContext;
 
 export const AuthProvider = ({ children }) => {
+  const { toastState, setToastState } = useContext(ToastContext);
   const [authTokens, setAuthTokens] = useState(() =>
     localStorage.getItem("authTokens")
       ? JSON.parse(localStorage.getItem("authTokens"))
@@ -47,8 +49,10 @@ export const AuthProvider = ({ children }) => {
       setUser(jwt_decode(data.access));
       localStorage.setItem("authTokens", JSON.stringify(data));
       history.push("/");
+      setToastState({'isOpen': true, 'type':'success', 'message': 'Zalogowano poprawnie!'});
     } else {
       alert("Something went wrong!");
+      setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
     }
   };
 
@@ -56,6 +60,10 @@ export const AuthProvider = ({ children }) => {
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
     await axios.get( 'users/' + user?.user_id, { headers })
       .then(resp => {
+        if(resp.status !== 200) {
+          setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak przy pobieraniu twoich danych!'});
+        }
+
         setUserData(resp.data);
         localStorage.setItem("userData", resp.data);
         console.log({resp});
@@ -83,7 +91,7 @@ export const AuthProvider = ({ children }) => {
       fetchGroups(userData?.groups);
     }, [userData]);
   
-  const registerUser = async (username, password, password2) => {
+  const registerUser = async (username, first_name, last_name, password, password2) => {
     const response = await fetch("http://127.0.0.1:8000/accounts/register/", {
       method: "POST",
       headers: {
@@ -91,14 +99,18 @@ export const AuthProvider = ({ children }) => {
       },
       body: JSON.stringify({
         username,
+        first_name,
+        last_name,
         password,
         password2
       })
     });
     if (response.status === 201) {
       history.push("/login");
+      setToastState({'isOpen': true, 'type':'success', 'message': 'Zarejestrowano poprawnie'});
     } else {
-      alert("Something went wrong!");
+      // alert("Something went wrong!");
+      setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak! Sprawdź poprawność wprowadzonych danych'});
     }
   };
 
@@ -107,6 +119,8 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem("authTokens");
     history.push("/");
+
+    setToastState({'isOpen': true, 'type':'success', 'message': 'Zostałeś wylogowany'})
   };
 
   const contextData = {

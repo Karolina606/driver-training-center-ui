@@ -24,6 +24,7 @@ import { format } from 'date-fns';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import pl from 'date-fns/locale/pl';
 import { integerPropType } from '@mui/utils';
+import ToastContext from '../../context/ToastContex';
 
 
 
@@ -50,6 +51,7 @@ export default function EnrollCourse(props) {
   const { authTokens, setUser, setAuthTokens } = React.useContext(AuthContext);
   var headers = { Authorization: `Bearer ${authTokens?.access}` };
   const classes = useStyles();
+  const { toastState, setToastState } = React.useContext(ToastContext);
 
   const [course, setCourse] = React.useState([]);
   const [courses, setCourses] = React.useState([]);
@@ -102,7 +104,15 @@ export default function EnrollCourse(props) {
         "is_internal_theoretical_exam_passed": false,
         "is_internal_practical_exam_passed": false
       },
-      headers);
+      headers).then(resp => {
+        if(resp.status === 201) {
+          setToastState({'isOpen': true, 'type':'success', 'message': 'Poprawnie zapisano na kurs'});
+        }else {
+          setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+        }
+      }).catch((error) => {
+        setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'})
+      });
     setOpen(false);
     // window.location.reload(false);
   };
