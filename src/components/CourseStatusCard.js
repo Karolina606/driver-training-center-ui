@@ -1,5 +1,5 @@
 
-import { Container, Card, CardContent, Typography, IconButton, Grid } from '@mui/material';
+import { Container, Card, CardContent, Typography, IconButton, Grid, useTheme } from '@mui/material';
 import { useState, useContext, useEffect } from 'react';
 import AuthContext from '../context/AuthContext';
 import UserDataContext from '../context/UserDataContext';
@@ -22,7 +22,7 @@ const CourseStatusCard = (props) => {
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
     const [open, setOpen] = useState(false);
     const { toastState, setToastState } = useContext(ToastContext);
-    // const { userData, setUserData } = useContext(UserDataContext);
+    const theme = useTheme();
 
     const [course, setCourse] = useState({});
     const [student, setStudent] = useState({});
@@ -38,7 +38,7 @@ const CourseStatusCard = (props) => {
 
 
     const fetchCourse = async (course_id) => {
-        await axios.get("/courses/" + course_id, { headers }).then(resp => { setCourse(resp.data); setCourseDetails(resp.data.start_date.replace(':00Z', '').replace('T', ', ')) });
+        await axios.get("/courses/" + course_id, { headers }).then(resp => { setCourse(resp.data); setCourseDetails(resp.data.start_date.replace('+01:00', '').replace('T', ', ')) });
     }
 
 
@@ -84,7 +84,6 @@ const CourseStatusCard = (props) => {
     const handleEdit = () => {
         setOpen(true);
       };
-    
       const handleClose = () => {
         setOpen(false);
       };
@@ -106,12 +105,16 @@ const CourseStatusCard = (props) => {
     };
 
     return <>
-        <Container maxWidth="sm" sx={{ mt: "2rem", px: "1rem" }}>
+        <Container maxWidth="sm" sx={{ mt: "2rem", px: "1rem"}} >
             <Card sx={{ minWidth: 130 }}>
-                <CardContent sx={{ px: "2rem" }}>
+                <CardContent sx={{ px: "2rem", 
+                backgroundColor: theme.palette.third.main 
+                }}>
                     <Grid container spacing={2}>
                         <Grid item xs={10}>
-                            <Typography variant="h6" component="div" sx={{ mb: 0.5, color: '#ffb300'}}>
+                            <Typography variant="h6" component="div" sx={{ mb: 0.5, 
+                                color: theme.palette.text_primary.main
+                                }}>
                                 {studentDetails}
                             </Typography>
                             <Typography >

@@ -1,6 +1,6 @@
 
 import { useContext } from "react";
-import { Container, Card, CardContent, Typography, IconButton, Grid } from '@mui/material';
+import { Container, Card, CardContent, Typography, IconButton, Grid, useTheme } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AuthContext from "../context/AuthContext";
 import axios from 'axios';
@@ -15,6 +15,7 @@ const CategoryCard = (props) => {
     const { authTokens } = useContext(AuthContext);
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
     const { toastState, setToastState } = useContext(ToastContext);
+    const theme = useTheme();
   
     const fetchCategories = async () => {
         await axios.get("/driving_license_categories/", { headers }).then(resp => { props.updateCategories(resp.data) });
@@ -38,8 +39,10 @@ const CategoryCard = (props) => {
 
     return <>
         <Container maxWidth="sm" sx={{ mt: "2rem", px: "1rem" }}>
-            <Card sx={{ minWidth: 130, px: "1rem" }}>
-                <CardContent>
+            <Card sx={{ minWidth: 130, px: "1rem", 
+            backgroundColor: theme.palette.third.main
+            }}>
+                <CardContent >
                     <Grid container spacing={2}>
                         <Grid item xs={10}>
                             <Typography variant="h7" component="div">

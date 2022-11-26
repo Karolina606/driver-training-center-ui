@@ -37,10 +37,10 @@ const UserPage = () => {
   console.log({response})
     return (
       <Box>
-        <h1>Hello, {response?.username}</h1>
-        <Typography>{response?.first_name} {response?.last_name}</Typography>
+        <h1>Cześć, {response?.first_name} {response?.last_name}</h1>
+        {/* <Typography>{response?.first_name} {response?.last_name}</Typography> */}
         <Typography>{response?.email}</Typography>
-        <Typography>{groupsNames}</Typography>
+        <Typography>Rola: {groupsNames}</Typography>
       </Box>
     );
   }

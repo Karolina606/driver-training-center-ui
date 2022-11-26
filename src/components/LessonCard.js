@@ -1,5 +1,5 @@
 
-import { Container, Card, CardContent, Typography, Grid, IconButton } from '@mui/material';
+import { Container, Card, CardContent, Typography, Grid, IconButton, useTheme, Chip } from '@mui/material';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
 import { useContext, useState, useEffect } from 'react';
@@ -16,12 +16,15 @@ import DialogContext from '../context/DialogContex';
 import AddLesson from './forms/AddLesson';
 import ToastContext from "../context/ToastContex";
 import RemoveIcon from '@mui/icons-material/Remove';
+import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 
 const LessonCard = (props) => {
     const { authTokens, setUser, setAuthTokens, userData, setUserData } = useContext(AuthContext);
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
     const [open, setOpen] = useState(false);
     const { toastState, setToastState } = useContext(ToastContext);
+    const theme = useTheme();
 
     const [instructor, setInstructor] = useState("");
     const [course, setCourse] = useState([]);
@@ -58,7 +61,7 @@ const LessonCard = (props) => {
     }
 
     const fetchStudentsDetails = async (student) => {
-        console.warn({student});
+        console.warn({student})
          await axios.get('users/' + student.student_id + "/name_of_user/", { headers })
          .then(resp => { 
            student['student_details'] = resp.data.first_name + " " + resp.data.last_name;
@@ -154,7 +157,7 @@ const LessonCard = (props) => {
 
         await axios.delete("/student_course_status/" + status.id +  "/delete_lesson_from_stu_course/" + props.lesson.id + "/", { headers }).then(resp => {
             console.warn({resp})
-            if(resp.status === 204) {
+            if(resp.status === 203) {
                 setToastState({'isOpen': true, 'type':'success', 'message': 'Poprawnie usunięto kursanta'});
               }else {
                 setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
@@ -169,10 +172,14 @@ const LessonCard = (props) => {
         setRefresh(false);
    }, [refresh]);
 
+
+
     return <>
         <Container maxWidth="sm" sx={{ mt: "2rem", px: "1rem" }} className={props.isArchived}>
-            <Card sx={{ minWidth: 130 }}>
-                <CardContent sx={{px: "2rem" }}>
+            <Card sx={{ minWidth: 130, 
+                backgroundColor: props.isArchived === "archived" ? theme.palette.archived.main : theme.palette.third.main 
+                }}>
+                <CardContent sx={{px: "2rem"}}>
                     <Grid container spacing={2}>
                         <Grid item xs={10}>
                             <Typography variant="h7" component="div">
@@ -182,13 +189,19 @@ const LessonCard = (props) => {
                                 Instruktor: {instructor}
                             </Typography>
                             <Typography color="text.secondary">
-                                Typ: {type}
-                            </Typography>
-                            <Typography color="text.secondary">
                                 Data rozpoczęcia: {format(new Date(start_date), 'dd.MM.yyyy, HH:mm')}
                             </Typography>
                             <Typography color="text.secondary">
                                 Data zakończenia: {format(new Date(end_date), 'dd.MM.yyyy, HH:mm')}
+                            </Typography>
+
+                            <Typography>
+                                Typ: 
+                                {type === 'P' ?
+                                    <Chip sx={{m: 1}} icon={<DirectionsCarIcon sx={{ fontSize:'medium'}}/>} label="Praktyczny" color="secondary" variant="outlined" />
+                                    :
+                                    <Chip sx={{m: 1}} icon={<AutoStoriesIcon sx={{ fontSize:'medium'}}/>} label="Teoretyczny" color="success" variant="outlined" />
+                                }
                             </Typography>
                         </Grid>
 
@@ -210,8 +223,10 @@ const LessonCard = (props) => {
 
                 </CardContent>
 
-                <Accordion>
-                        <AccordionSummary sx={{ px: "2rem", background:"#ffb300", color:"black" }}
+                <Accordion 
+                sx={{backgroundColor: props.isArchived === "archived" ? theme.palette.archived.main : theme.palette.third.main }}
+                >
+                        <AccordionSummary sx={{ px: "2rem",  background: theme.palette.primary.main, color:"black" }}
                             expandIcon={<ExpandMoreIcon sx={{color:"black"}} />}
                             aria-controls="panel1a-content"
                             id="panel1a-header"

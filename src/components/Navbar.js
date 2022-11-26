@@ -16,55 +16,70 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import { ColorModeContext } from "../App";
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import { useTheme } from "@mui/material";
 
 const pagesAdmin = [
-    <Button textAlign="center" component={Link} to="/users">
-        Użytkownicy
-    </Button>,
-    <Button textAlign="center" component={Link} to="/courses">
-        Kursy
-    </Button>,
-    <Button textAlign="center" component={Link} to="/lessons">
-        Lekcje
-    </Button>,
-    <Button textAlign="center" component={Link} to="/categories">
-        Kategorie
-    </Button>,
-    <Button textAlign="center" component={Link} to="/course-statuses">
-        Kursanci
-    </Button>
+    // <Button textAlign="center" component={Link} to="/users" color='inherit'>
+        {"title": "Użytkownicy", "link": "/users"},
+    // </Button>,
+    // <Button textAlign="center" component={Link} to="/courses">
+        // Kursy
+        {"title": "Kursy", "link": "/courses"},
+    // </Button>,
+    // <Button textAlign="center" component={Link} to="/lessons">
+        // Lekcje
+        {"title": "Lekcje", "link": "/lessons"},
+    // </Button>,
+    // <Button textAlign="center" component={Link} to="/categories">
+        // Kategorie
+        {"title": "Kategorie", "link": "/categories"},
+    // </Button>,
+    // <Button textAlign="center" component={Link} to="/course-statuses">
+        // Kursanci
+        {"title": "Kursanci", "link": "/course-statuses"},
+    // </Button>
 ];
 
 const pagesInstructor = [
-    <Button textAlign="center" component={Link} to="/courses">
-        Kursy
-    </Button>,
-    <Button textAlign="center" component={Link} to="/lessons">
-        Lekcje
-    </Button>,
-    <Button textAlign="center" component={Link} to="/course-statuses">
-        Kursanci
-    </Button>
+    // <Button textAlign="center" component={Link} to="/courses">
+        // Kursy
+        {"title": "Kursy", "link": "/courses"},
+    // </Button>,
+    // <Button textAlign="center" component={Link} to="/lessons">
+        // Lekcje
+        {"title": "Lekcje", "link": "/lessons"},
+    // </Button>,
+    // <Button textAlign="center" component={Link} to="/course-statuses">
+        // Kursanci
+        {"title": "Kursanci", "link": "/course-statuses"},
+    // </Button>
 ];
 
 const pagesStudent = [
-    <Button textAlign="center" component={Link} to="/lessons">
-        Lekcje
-    </Button>,
-    <Button textAlign="center" component={Link} to="/course-statuses">
-        Status
-    </Button>
+    // <Button textAlign="center" component={Link} to="/lessons">
+        // Lekcje
+        {"title": "Lekcje", "link": "/lessons"},
+    // </Button>, 
+    // <Button textAlign="center" component={Link} to="/course-statuses">
+    //     Status
+        {"title": "Kursanci", "link": "/course-statuses"},
+    {/* </Button> */}
 ];
 
 
 
-const Navbar = () => {
+const Navbar = (props) => {
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [selectedUserOption, setSelectedUserOption] = React.useState(-1);
     const { user, logoutUser, userData, setUserData } = useContext(AuthContext);
+    const { colorMode, setColorMode } = useContext(ColorModeContext);
     const history = useHistory();
+    const theme = useTheme();
 
 
     const handleOpenNavMenu = (event) => {
@@ -84,10 +99,14 @@ const Navbar = () => {
     };
 
     const settings = [
-        <Button textAlign="center" component={Link} to="/user-profile">
+        <Button textAlign="center" component={Link} to="/user-profile" 
+        sx={{color: theme.palette.text_primary.main}}
+        >
             Profile
         </Button>,
-        <Button textAlign="center" component={Link} onClick={e => {
+        <Button textAlign="center" component={Link} 
+        sx={{color: theme.palette.text_primary.main}}
+         onClick={e => {
             setUserData({});
             logoutUser();
         }}>
@@ -138,8 +157,12 @@ const Navbar = () => {
         menu_variants =
             <>
                 {pages?.map((page) => (
-                    <MenuItem key={page} onClick={handleCloseNavMenu}>
-                        <Typography textAlign="center">{page}</Typography>
+                    <MenuItem key={page.title} onClick={handleCloseNavMenu}>
+                        <Button textAlign="center" component={Link} to={page.link} 
+                        sx={{ color: theme.palette.text_primary.main }}
+                        >
+                            {page.title}
+                        </Button>
                     </MenuItem>
                 ))}
             </>
@@ -198,8 +221,10 @@ const Navbar = () => {
         <AppBar position="static" >
             <Container maxWidth="x4">
                 <Toolbar disableGutters>
-                    <Link to="/" className="icon">
-                        <DirectionsCarIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                    <Link to="/">
+                        <DirectionsCarIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, 
+                        color: theme.palette.text_primary.main 
+                        }}  />
                     </Link>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
@@ -208,7 +233,7 @@ const Navbar = () => {
                             aria-controls="menu-appbar"
                             aria-haspopup="true"
                             onClick={handleOpenNavMenu}
-                            color="inherit"
+                            // color="inherit"
                         >
                             <MenuIcon />
                         </IconButton>
@@ -238,6 +263,9 @@ const Navbar = () => {
                         {menu_variants}
                     </Box>
 
+                    <IconButton sx={{ ml: 1, mr: 2 }} onClick={props.colorMode.toggleColorMode} color="inherit">
+                        {props.theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+                    </IconButton>
                     {user_buttons}
                 </Toolbar>
             </Container>

@@ -1,5 +1,5 @@
 
-import { Container, Card, CardContent, Typography } from '@mui/material';
+import { Container, Card, CardContent, Typography, useTheme } from '@mui/material';
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../context/AuthContext";
 import Button from '@mui/material/Button';
@@ -18,6 +18,7 @@ import { makeStyles } from '@material-ui/core';
 import EnrollCourse from './forms/EnrollCourse';
 import { purple, red } from '@mui/material/colors';
 import ToastContext from "../context/ToastContex";
+import { BorderColor } from '@mui/icons-material';
 
 
 const useStyles = makeStyles(theme => ({
@@ -71,8 +72,11 @@ const UserCard = (props) => {
   const email = props.user.email;
   const groups = props.user.groups;
   const user_id = props.user.id;
+  const first_name = props.user.first_name;
+  const last_name = props.user.last_name;
 
   const [open, setOpen] = useState(false);
+  const theme = useTheme();
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -140,10 +144,12 @@ const UserCard = (props) => {
 
   return <>
     <Container maxWidth="md" sx={{ mt: "2rem", px: "1rem" }}>
-      <Card sx={{ minWidth: 130, p: "1rem" }}>
+      <Card sx={{ minWidth: 130, p: "1rem", 
+      backgroundColor: theme.palette.third.main
+       }}>
         <CardContent>
           <Typography variant="h5" component="div">
-            {username}
+            {username}: {first_name} {last_name}
           </Typography>
           <Typography color="text.secondary">
             Email: {email}
@@ -157,8 +163,8 @@ const UserCard = (props) => {
 
         {response?.groups.includes("http://127.0.0.1:8000/groups/1/") ?
         <>
-          <ButtonGroup variant="contained" aria-label="outlined primary button group">
-            <Button onClick={e => {grant_student(); // window.location.reload(false); 
+          <ButtonGroup variant="contained" aria-label="outlined primary button group" maxWidth="md" sx={{width: '100%'}}>
+            <Button sx={{width: '100%'}} onClick={e => {grant_student(); // window.location.reload(false); 
               }} 
             disabled={groups.includes("http://127.0.0.1:8000/groups/3/")}>
               {groups.includes("http://127.0.0.1:8000/groups/3/") ?
@@ -167,28 +173,28 @@ const UserCard = (props) => {
                 </>
                 :
                 <>
-                  Grant student
+                  Uprawnij studenta
                 </>
               }
             </Button>
 
-            <Button onClick={e => {
+            <Button sx={{width: '100%'}} onClick={e => {
               grant_instructor();
               // window.location.reload(false);
             }}
             disabled={groups.includes("http://127.0.0.1:8000/groups/2/")}>
               {groups.includes("http://127.0.0.1:8000/groups/2/") ?
                 <>
-                  Instructor
+                  Instruktor
                 </>
                 :
                 <>
-                  Grant instructor
+                  Uprawnij inst
                 </>
               }
             </Button>
 
-            <Button onClick={e => {
+            <Button sx={{width: '100%'}} onClick={e => {
               grant_admin();
               // window.location.reload(false);
               }}
@@ -199,19 +205,20 @@ const UserCard = (props) => {
                 </>
                 :
                 <>
-                  Grant admin
+                  Uprawnij admina
                 </>
               }
             </Button>
             </ButtonGroup>
 
             {groups.includes("http://127.0.0.1:8000/groups/3/") ?
-           <ButtonGroup sx={{ mt: "1rem", width: '100%'}} variant="contained" aria-label="outlined button group">
-            <Button onClick={handleClickOpen} sx={{ mt: "1rem", width: '100%'}} variant="outlined" aria-label="outlined button group">
+            <Button onClick={handleClickOpen} sx={{ mt: 2, width: '100%',
+             color: theme.palette.secondary.main,
+             borderColor: theme.palette.secondary.main
+             }} variant="outlined" aria-label="outlined button group">
               Zapisz na kurs
             </Button>
           
-          </ButtonGroup> 
           : <></>}
           </>
           : <></>

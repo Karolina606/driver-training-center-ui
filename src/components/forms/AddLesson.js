@@ -78,6 +78,7 @@ export default function AddLesson(props) {
   const [endDate, setEndDate] = useState(dayjs(now.toString()));
 
   const [selectedStudents, setSelectedStudents] =  useState([]);
+  const [selectedStudentsIds, setSelectedStudentsIds] =  useState([]);
   const [students, setStudents] =  useState([]);
   const [students2, setStudents2] = useState([]);
   const [courses2, setCourses2] = useState([]);
@@ -199,17 +200,39 @@ const fetchStudentsDetails = async (student) => {
     headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
     
     if(lessonToEdit === undefined){
-        await axios.post("lessons/",
+        // await axios.post("lessons/",
+        // {
+        //     "instructor": instructor,
+        //     "course": course,
+        //     "type": type,
+        //     "start_date": formatData(startDate),
+        //     "end_date": formatData(endDate)
+        // },
+        // headers).then(resp => {
+        //   addLessonToStudentStatus(resp.data);
+        //   if(resp.status === 201) {
+        //     setToastState({'isOpen': true, 'type':'success', 'message': 'Dodano nową lekcję'});
+        //   }else {
+        //     setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+        //   }
+        // }).catch((error) => {
+        //   setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'})
+        // });
+
+
+        await axios.post("lessons/add_lesson_with_students/",
         {
             "instructor": instructor,
             "course": course,
             "type": type,
             "start_date": formatData(startDate),
-            "end_date": formatData(endDate)
+            "end_date": formatData(endDate),
+            "students": selectedStudents
         },
         headers).then(resp => {
-          addLessonToStudentStatus(resp.data);
-          if(resp.status === 201) {
+          // addLessonToStudentStatus(resp.data);
+          console.warn({resp})
+          if(resp.status === 200) {
             setToastState({'isOpen': true, 'type':'success', 'message': 'Dodano nową lekcję'});
           }else {
             setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
@@ -217,6 +240,7 @@ const fetchStudentsDetails = async (student) => {
         }).catch((error) => {
           setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'})
         });
+
       }else{
         console.log({lessonToEdit});
         console.log({instructor});
@@ -289,6 +313,10 @@ const fetchStudentsDetails = async (student) => {
     fetchCourses();
     // fetchStudents();
 }, []);
+
+useEffect(() => {
+  console.warn(selectedStudents);
+}, [selectedStudents]);
 
 useEffect(() => {
   setStudents2([]);

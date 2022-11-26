@@ -13,9 +13,9 @@ code {
 }
 
 
-.icon {
+/* .icon {
   color: #ffb300;
-}
+} */
 
 .MuiButtonGroup-root.MuiButtonGroup-contained.css-1s5ardk-MuiButtonGroup-root{
   width: 100%;
@@ -24,3 +24,6 @@ code {
 .MuiButtonGroup-root.MuiButtonGroup-contained.css-1s5ardk-MuiButtonGroup-root .MuiButtonBase-root{
   width: 100%;
 }
+
+
+      

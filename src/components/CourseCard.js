@@ -1,5 +1,5 @@
 
-import { Container, Card, CardContent, Typography, IconButton, Grid } from '@mui/material';
+import { Container, Card, CardContent, Typography, IconButton, Grid, useTheme } from '@mui/material';
 import { useState, useContext, useEffect } from 'react';
 import AuthContext from '../context/AuthContext';
 import axios from 'axios';
@@ -16,6 +16,7 @@ const CourseCard = (props) => {
     const { authTokens, setUser, setAuthTokens } = useContext(AuthContext);
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
     const { toastState, setToastState } = useContext(ToastContext);
+    const theme = useTheme();
 
     const [category, setCategory] = useState("");
     const start_date = props.course.start_date.replace('Z', '');
@@ -86,8 +87,10 @@ const CourseCard = (props) => {
 
     return <>
         <Container maxWidth="sm" sx={{ mt: "2rem", px: "1rem" }}>
-            <Card sx={{ minWidth: 130 }}>
-                <CardContent sx={{ px: "2rem" }}>
+            <Card sx={{ minWidth: 130, 
+                backgroundColor: theme.palette.third.main 
+                }}>
+                <CardContent sx={{ px: "2rem"}}>
                     <Grid container spacing={2}>
                         <Grid item xs={10}>
                             <Typography variant="h7" component="div">
@@ -106,8 +109,10 @@ const CourseCard = (props) => {
                     </Grid>
                 </CardContent>
 
-                <Accordion>
-                    <AccordionSummary sx={{ px: "2rem", background:"#ffb300", color:"black" }}
+                <Accordion 
+                sx={{backgroundColor: theme.palette.third.main}}
+                >
+                    <AccordionSummary sx={{ px: "2rem", background: theme.palette.primary.main, color:"black" }}
                         expandIcon={<ExpandMoreIcon sx={{color:"black"}}/>}
                         aria-controls="panel1a-content"
                         id="panel1a-header"

@@ -118,7 +118,7 @@ export const AuthProvider = ({ children }) => {
     setAuthTokens(null);
     setUser(null);
     localStorage.removeItem("authTokens");
-    history.push("/");
+    history.push("/login");
 
     setToastState({'isOpen': true, 'type':'success', 'message': 'Zostałeś wylogowany'})
   };

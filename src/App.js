@@ -3,28 +3,21 @@ import "./index.css";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import { BrowserRouter as Router, Route, Switch, BrowserRouter } from "react-router-dom";
-import {ReactDOM, createRoot} from "react-dom/client";
+import {createRoot} from "react-dom/client";
 import PrivateRoute from "./utils/PrivateRoute";
 import { AuthProvider } from "./context/AuthContext";
 import Home from "./pages/homePage";
 import Login from "./pages/loginPage";
 import Register from "./pages/registerPage";
-import ProtectedPage from "./pages/ProtectedPage";
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import UsersPage from "./pages/UsersPage";
 import UserPage from "./pages/UserPage";
 import CoursesPage from "./pages/CoursesPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import LessonsPage from "./pages/LessonsPage";
-import { AlignHorizontalCenter, SignalCellularNullSharp } from "@mui/icons-material";
 import CourseStatusesPage from "./pages/CourseStatusesPage";
-import UserDataContext from "./context/UserDataContext";
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import ToastContext from "./context/ToastContex";
@@ -33,83 +26,11 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-        main: '#ffb300',
-    },
-      secondary: {
-        main: '#ffffff',
-    },
-    third: {
-      main: '#f4511e',
-    },
-    archived: {
-      backgroundColor: '#fffff',
-    }
-    // background: {
-    //   default: "#e4f0e2"
-    // }
-  },
-
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 700,
-      lg: 1200,
-      xl: 1536,
-    },
-  },
-//   root: {
-//     display: 'flex',
-//     flexDirection: 'column',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     padding: theme.spacing(2),
-//     '& .MuiTextField-root': {
-//         margin: theme.spacing(1),
-//         width: '300px',
-//         },
-//     '& .MuiButtonBase-root': {
-//         margin: theme.spacing(2),
-//         },
-//     },
-});
-
-const theme = createTheme({
-//   palette: {
-//     primary: {
-//       light: '#757ce8',
-//       main: '#3f50b5',
-//       dark: '#002884',
-//       contrastText: '#fff',
-//     },
-//     secondary: {
-//       light: '#ff7961',
-//       main: '#f44336',
-//       dark: '#ba000d',
-//       contrastText: '#000',
-//     },
-//   },
-palette: {
-    primary: {
-      main: '#ffb300',
-    },
-    secondary: {
-      main: '#3f51b5',
-    },
-  },
-});
+export const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
 function App() {
-  const [userData, setUserData] = useState({});
-
-  // const [openToast, setOpenToast] = React.useState(false);
   const [toastState, setToastState] = React.useState({'isOpen': false, 'type':'success', 'message': 'success'});
   const value = {toastState, setToastState};
-
 
   const handleClick = () => {
     setToastState({...toastState, 'isOpen': true});
@@ -123,18 +44,68 @@ function App() {
     setToastState({...toastState, 'isOpen': false});
   };
 
+
+  const [mode, setMode] = React.useState('light');
+  const colorMode = React.useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+      },
+    }),
+    [],
+  );
+
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode,
+        },
+
+        palette: {
+          mode,
+          primary: {
+              main: '#ffb300',
+          },
+          secondary: {
+              main:  "#e65100",
+          },
+          third: {
+            main: mode === 'dark' ? '#212121' : '#fff3e0',
+          },
+          archived: {
+            main: mode === 'dark' ? '#263238': "#e0e0e0",
+          },
+          text_primary: {
+            main: mode === 'dark' ? '#ffb300' : '#000000',
+          },
+        },
+      
+        breakpoints: {
+          values: {
+            xs: 0,
+            sm: 600,
+            md: 700,
+            lg: 1200,
+            xl: 1536,
+          },
+        },
+      }),
+    [mode],
+  );
+
     return ( <div className="App">
             <main>
             <Router>
                     <div className="flex flex-col min-h-screen overflow-hidden">
                     <ToastContext.Provider value={value} >
                         <AuthProvider>
-                        <ThemeProvider theme={darkTheme}>
-                             <Navbar />
+                        <ColorModeContext.Provider value={colorMode}>
+                        <ThemeProvider theme={theme}>
+                             <Navbar theme={theme} colorMode={colorMode}/>
                                 <CssBaseline />
                                 <Container maxWidth="md" sx={{ mt: "2rem", px: "1rem", minHeight: 'calc(100vh - 34px)'}}>
                                   <Switch>
-                                      <PrivateRoute component={ProtectedPage} path="/protected" exact />
                                       <Route component={Login} path="/login"/>
                                       <Route component={Register} path="/register" />
 
@@ -146,8 +117,6 @@ function App() {
                                       <PrivateRoute component={UserPage} path="/user-profile" />
                                       <PrivateRoute component={CourseStatusesPage} path="/course-statuses" />
                                       <Route component={Home} path="/" />
-
-                                      
                                   </Switch>
                                   
                                 </Container>
@@ -160,6 +129,7 @@ function App() {
                                 </Snackbar>
 
                             </ThemeProvider>
+                            </ColorModeContext.Provider>
                         </AuthProvider>
                         </ToastContext.Provider>
                         
@@ -170,5 +140,4 @@ function App() {
     );
 }
 createRoot(document.getElementById('root')).render(<App />)
-// ReactDOM.render(<App />, document.getElementById("root"));
 export default App;
