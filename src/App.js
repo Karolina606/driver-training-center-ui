@@ -68,10 +68,10 @@ function App() {
               main: '#ffb300',
           },
           secondary: {
-              main:  "#e65100",
+              main: mode === 'dark' ? '#ffb300' : "#ff8f00",
           },
           third: {
-            main: mode === 'dark' ? '#212121' : '#fff3e0',
+            main: mode === 'dark' ? '#212121' : '#f5f5f5',
           },
           archived: {
             main: mode === 'dark' ? '#263238': "#e0e0e0",

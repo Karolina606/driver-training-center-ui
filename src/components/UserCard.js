@@ -19,7 +19,7 @@ import EnrollCourse from './forms/EnrollCourse';
 import { purple, red } from '@mui/material/colors';
 import ToastContext from "../context/ToastContex";
 import { BorderColor } from '@mui/icons-material';
-
+import { baseURL } from '../utils/useAxios';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -161,13 +161,13 @@ const UserCard = (props) => {
         </CardContent>
 
 
-        {response?.groups.includes("http://127.0.0.1:8000/groups/1/") ?
+        {response?.groups.includes(baseURL + "groups/1/") ?
         <>
           <ButtonGroup variant="contained" aria-label="outlined primary button group" maxWidth="md" sx={{width: '100%'}}>
             <Button sx={{width: '100%'}} onClick={e => {grant_student(); // window.location.reload(false); 
               }} 
-            disabled={groups.includes("http://127.0.0.1:8000/groups/3/")}>
-              {groups.includes("http://127.0.0.1:8000/groups/3/") ?
+            disabled={groups.includes(baseURL + "groups/3/")}>
+              {groups.includes(baseURL + "groups/3/") ?
                 <>
                   Student
                 </>
@@ -182,8 +182,8 @@ const UserCard = (props) => {
               grant_instructor();
               // window.location.reload(false);
             }}
-            disabled={groups.includes("http://127.0.0.1:8000/groups/2/")}>
-              {groups.includes("http://127.0.0.1:8000/groups/2/") ?
+            disabled={groups.includes(baseURL + "groups/2/")}>
+              {groups.includes(baseURL + "groups/2/") ?
                 <>
                   Instruktor
                 </>
@@ -198,8 +198,8 @@ const UserCard = (props) => {
               grant_admin();
               // window.location.reload(false);
               }}
-              disabled={groups.includes("http://127.0.0.1:8000/groups/1/")}>
-              {groups.includes("http://127.0.0.1:8000/groups/1/") ?
+              disabled={groups.includes(baseURL + "groups/1/")}>
+              {groups.includes(baseURL + "groups/1/") ?
                 <>
                   Admin
                 </>
@@ -211,7 +211,7 @@ const UserCard = (props) => {
             </Button>
             </ButtonGroup>
 
-            {groups.includes("http://127.0.0.1:8000/groups/3/") ?
+            {groups.includes(baseURL + "groups/3/") ?
             <Button onClick={handleClickOpen} sx={{ mt: 2, width: '100%',
              color: theme.palette.secondary.main,
              borderColor: theme.palette.secondary.main
@@ -225,12 +225,6 @@ const UserCard = (props) => {
         }
       </Card>
     </Container>
-
-    <div>
-      {/* <DialogContext.Provider value={[open, setOpen]}>
-        <EditUserDialogForm></EditUserDialogForm>
-      </DialogContext.Provider> */}
-    </div>
 
 <DialogContext.Provider value={[open, setOpen]}>
 <EnrollCourse student={props.user} />

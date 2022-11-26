@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import AuthContext from "../context/AuthContext";
-import { TextField, Button, Box, Grid } from '@mui/material';
+import { TextField, Button, Box, Grid, useTheme } from '@mui/material';
 import { makeStyles } from '@material-ui/core';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
 
 const LoginPage = () => {
   const { loginUser } = useContext(AuthContext);
+  const theme = useTheme();
 
   const classes = useStyles();
   // create state variables for each input
@@ -44,7 +45,7 @@ const LoginPage = () => {
 
   return (
     <section>
-      <Card sx={{ minWidth: 275, px: "1rem" }}>
+      <Card sx={{ minWidth: 275, px: "1rem", backgroundColor: theme.palette.third.main }}>
         <CardContent maxWidth="sm">
           {/* <form onSubmit={handleSubmit}>
         <h1>Login </h1>
@@ -56,7 +57,7 @@ const LoginPage = () => {
         <button type="submit">Login</button>
       </form> */}
           <Box >
-            <h1>Zaloguj się</h1>
+            <h1 sx={{color: theme.palette.text_primary.main}}>Zaloguj się</h1>
             <form className={classes.root} onSubmit={handleSubmit}>
               <TextField
                 label="Email"

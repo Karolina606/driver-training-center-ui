@@ -22,51 +22,22 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { useTheme } from "@mui/material";
 
 const pagesAdmin = [
-    // <Button textAlign="center" component={Link} to="/users" color='inherit'>
         {"title": "Użytkownicy", "link": "/users"},
-    // </Button>,
-    // <Button textAlign="center" component={Link} to="/courses">
-        // Kursy
         {"title": "Kursy", "link": "/courses"},
-    // </Button>,
-    // <Button textAlign="center" component={Link} to="/lessons">
-        // Lekcje
         {"title": "Lekcje", "link": "/lessons"},
-    // </Button>,
-    // <Button textAlign="center" component={Link} to="/categories">
-        // Kategorie
         {"title": "Kategorie", "link": "/categories"},
-    // </Button>,
-    // <Button textAlign="center" component={Link} to="/course-statuses">
-        // Kursanci
         {"title": "Kursanci", "link": "/course-statuses"},
-    // </Button>
 ];
 
 const pagesInstructor = [
-    // <Button textAlign="center" component={Link} to="/courses">
-        // Kursy
         {"title": "Kursy", "link": "/courses"},
-    // </Button>,
-    // <Button textAlign="center" component={Link} to="/lessons">
-        // Lekcje
         {"title": "Lekcje", "link": "/lessons"},
-    // </Button>,
-    // <Button textAlign="center" component={Link} to="/course-statuses">
-        // Kursanci
         {"title": "Kursanci", "link": "/course-statuses"},
-    // </Button>
 ];
 
 const pagesStudent = [
-    // <Button textAlign="center" component={Link} to="/lessons">
-        // Lekcje
         {"title": "Lekcje", "link": "/lessons"},
-    // </Button>, 
-    // <Button textAlign="center" component={Link} to="/course-statuses">
-    //     Status
-        {"title": "Kursanci", "link": "/course-statuses"},
-    {/* </Button> */}
+        {"title": "Moje kursy", "link": "/course-statuses"},
 ];
 
 
@@ -146,14 +117,6 @@ const Navbar = (props) => {
             pages = pagesStudent;
         }
 
-        // if (userData?.groups?.includes("http://127.0.0.1:8000/groups/1/")){
-        //     pages = pagesAdmin;
-        // }else if (userData?.groups?.includes("http://127.0.0.1:8000/groups/2/")){
-        //     pages = pagesInstructor;
-        // }else{
-        //     pages = pagesStudent;
-        // }
-
         menu_variants =
             <>
                 {pages?.map((page) => (
@@ -171,10 +134,10 @@ const Navbar = (props) => {
     let user_buttons;
     if (user == null) {
         user_buttons = <>
-            <Button textAlign="center" component={Link} to="/login">
+            <Button textAlign="center" component={Link} to="/login" sx={{color: theme.palette.text_primary.main}}>
                 Login
             </Button>
-            <Button textAlign="center" component={Link} to="/register">
+            <Button textAlign="center" component={Link} to="/register" sx={{color: theme.palette.text_primary.main}}>
                 Zarejestruj
             </Button>
         </>

@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import AuthContext from "../context/AuthContext";
-import { FormGroup, FormControl, InputLabel, Input, FormHelperText, TextField, Box } from '@mui/material';
+import { FormGroup, FormControl, InputLabel, Input, FormHelperText, TextField, Box, useTheme } from '@mui/material';
 import { Button, makeStyles } from '@material-ui/core';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -31,12 +31,10 @@ function Register() {
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const { registerUser } = useContext(AuthContext);
+  const theme = useTheme();
 
   const handleSubmit = async e => {
     e.preventDefault();
-    // console.log({ username })
-    console.log({ password })
-    console.log({ password2 })
     registerUser(email, firstName, lastName, password, password2);
   };
 
@@ -55,10 +53,10 @@ function Register() {
   // };
   return (
     <section>
-      <Card sx={{ minWidth: 275, px: "1rem" }}>
+      <Card sx={{ minWidth: 275, px: "1rem", backgroundColor: theme.palette.third.main }}>
         <CardContent>
           <Box >
-            <h1>Zarejestruj się</h1>
+            <h1 sx={{color: theme.palette.text_primary.main}}>Zarejestruj się</h1>
             {/* <form onSubmit={handleSubmit}>
         <h1>Register</h1>
         <hr />
@@ -153,7 +151,7 @@ function Register() {
                 onChange={e => setPassword2(e.target.value)}
               />
               <div>
-                <Button type="submit" variant="contained">
+                <Button type="submit" variant="contained" sx={{backgroundColor: theme.palette.primary.main}}>
                   Zarejestruj
                 </Button>
               </div>
