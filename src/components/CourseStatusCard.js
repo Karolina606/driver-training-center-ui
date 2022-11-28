@@ -2,15 +2,8 @@
 import { Container, Card, CardContent, Typography, IconButton, Grid, useTheme } from '@mui/material';
 import { useState, useContext, useEffect } from 'react';
 import AuthContext from '../context/AuthContext';
-import UserDataContext from '../context/UserDataContext';
 import axios from 'axios';
-import { format } from 'date-fns';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import DialogContext from '../context/DialogContex';
 import EditCourseStatus from './forms/EditCourseStatus';
@@ -90,8 +83,6 @@ const CourseStatusCard = (props) => {
 
     const handleDelete = async e => {
         e.preventDefault();
-        // console.log({ id });
-        // console.log({ headers });
 
         await axios.delete("student_course_status/" + props.courseStatus.id, { headers }).then(resp => {
             if(resp.status === 204) {

@@ -30,17 +30,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function EditUserDialogForm(props) {
-  // const [open, setOpen] = React.useState(props.open);
-  // const [open] = useContext(DialogContex);
   const [open, setOpen] = React.useContext(DialogContext);
   const { toastState, setToastState } = React.useContext(ToastContext);
-
-
-  // React.useEffect(() => {
-  //   setOpen(props.open);
-  //   console.log({open});
-  // }, [props.open]
-  // );
 
   const classes = useStyles();
 
@@ -61,9 +52,6 @@ export default function EditUserDialogForm(props) {
 
   return (
     <div>
-      {/* <Button variant="outlined" onClick={handleClickOpen}>
-        Open form dialog
-      </Button> */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Edytuj Użytkownika</DialogTitle>
         <DialogContent>

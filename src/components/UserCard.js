@@ -180,7 +180,6 @@ const UserCard = (props) => {
 
             <Button sx={{width: '100%'}} onClick={e => {
               grant_instructor();
-              // window.location.reload(false);
             }}
             disabled={groups.includes(baseURL + "groups/2/")}>
               {groups.includes(baseURL + "groups/2/") ?
@@ -196,7 +195,6 @@ const UserCard = (props) => {
 
             <Button sx={{width: '100%'}} onClick={e => {
               grant_admin();
-              // window.location.reload(false);
               }}
               disabled={groups.includes(baseURL + "groups/1/")}>
               {groups.includes(baseURL + "groups/1/") ?

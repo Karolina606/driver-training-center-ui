@@ -84,16 +84,12 @@ export default function AddLesson(props) {
   const [courses2, setCourses2] = useState([]);
 
   const [lessons, setLessons] = useState([]);
-  // const [lessonToEdit, setLessonToEdit] = useState();
 
   const lessonToEdit = props.lessonToEdit;
 
   useEffect(() => {
     console.log({lessonToEdit});
     if(lessonToEdit !== undefined ){
-    //   setLessonToEdit(props.lessonToEdit);
-    //   var kkkkk = props.lessonToEdit;
-    //  console.warn({kkkkk});
 
       setInstructor(lessonToEdit.instructor);
       setCourse(lessonToEdit.course);
@@ -159,7 +155,6 @@ const fetchStudentsDetails = async (student) => {
    }
 
    const fetchCourseDetails = async (course) => {
-    // headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
     await axios.get(course.driving_license_category, { headers })
      .then(resp => { 
        course['course_details'] = resp.data.name + " T:" + resp.data.theory_full_time + " P:" + resp.data.practice_full_time + ", " + format(new Date(course.start_date.replace(':00Z', '').replace('T', ', ')), 'dd.MM.yyyy HH:mm');
@@ -200,26 +195,6 @@ const fetchStudentsDetails = async (student) => {
     headers = { headers: { Authorization: `Bearer ${authTokens?.access}` } };
     
     if(lessonToEdit === undefined){
-        // await axios.post("lessons/",
-        // {
-        //     "instructor": instructor,
-        //     "course": course,
-        //     "type": type,
-        //     "start_date": formatData(startDate),
-        //     "end_date": formatData(endDate)
-        // },
-        // headers).then(resp => {
-        //   addLessonToStudentStatus(resp.data);
-        //   if(resp.status === 201) {
-        //     setToastState({'isOpen': true, 'type':'success', 'message': 'Dodano nową lekcję'});
-        //   }else {
-        //     setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
-        //   }
-        // }).catch((error) => {
-        //   setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'})
-        // });
-
-
         await axios.post("lessons/add_lesson_with_students/",
         {
             "instructor": instructor,
@@ -230,7 +205,6 @@ const fetchStudentsDetails = async (student) => {
             "students": selectedStudents
         },
         headers).then(resp => {
-          // addLessonToStudentStatus(resp.data);
           console.warn({resp})
           if(resp.status === 200) {
             setToastState({'isOpen': true, 'type':'success', 'message': 'Dodano nową lekcję'});
@@ -286,17 +260,6 @@ const fetchStudentsDetails = async (student) => {
         });
     })
   }
-
-  // useEffect(() => {
-  // //   var kkkkk = props.lessonToEdit;
-  // //    console.warn({kkkkk});
-  //       if(lessonToEdit.id !== undefined){
-  //         const id = lessonToEdit.id;
-  //          axios.get("/student_course_status/" + id + "/get_by_lesson_id/", {headers}).then(resp => {
-  //           props.updateStudents2(resp);
-  //         });
-  //       }
-  // }, [lessonToEdit]);
 
 
   const handleStudentChange = (event) => {
@@ -384,7 +347,6 @@ useEffect(() => {
               {courses?.map((course) => (
                     <MenuItem key={course.id} value={course.id}>
                         {course.course_details}
-                        {/* {course.category_details} */}
                     </MenuItem>
                 ))}
             </Select>

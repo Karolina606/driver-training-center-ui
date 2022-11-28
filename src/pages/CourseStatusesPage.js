@@ -58,10 +58,6 @@ console.log({userData});
         <CourseStatusCard courseStatus={courseStatus} updateCourseStatuses={updateCourseStatuses} />
       ))}
     </section>
-
-    {/* <DialogContext.Provider value={[open, setOpen]}>
-      <AddCourse updateCourseStatuses={updateCourseStatuses}/>
-    </DialogContext.Provider> */}
   </>
   );
 };

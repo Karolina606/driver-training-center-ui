@@ -1,29 +1,18 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContext from '../../context/DialogContex';
 import { makeStyles } from '@material-ui/core';
 import axios from 'axios';
 import AuthContext from '../../context/AuthContext';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import dayjs from 'dayjs';
-import { plPL } from '@mui/x-date-pickers';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { now } from 'moment/moment';
 import { format } from 'date-fns';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import pl from 'date-fns/locale/pl';
-import { integerPropType } from '@mui/utils';
 import ToastContext from '../../context/ToastContex';
 
 
@@ -114,7 +103,6 @@ export default function EnrollCourse(props) {
         setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'})
       });
     setOpen(false);
-    // window.location.reload(false);
   };
 
   React.useEffect(() => {

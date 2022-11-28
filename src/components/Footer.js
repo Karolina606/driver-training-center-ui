@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   footer: {
-    // display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
