@@ -3,6 +3,7 @@ import jwt_decode from "jwt-decode";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import ToastContext from "../context/ToastContex";
+import { baseURL } from "../utils/useAxios";
 
 const AuthContext = createContext();
 
@@ -22,9 +23,7 @@ export const AuthProvider = ({ children }) => {
   );
 
   const [userData, setUserData] = useState(() =>
-    localStorage.getItem("userData")
-      ? localStorage.getItem("userData")
-      : {}
+    localStorage.getItem("userData") ? localStorage.getItem("userData") : {}
   );
 
   const [loading, setLoading] = useState(true);
@@ -32,15 +31,15 @@ export const AuthProvider = ({ children }) => {
   const history = useHistory();
 
   const loginUser = async (username, password) => {
-    const response = await fetch("http://127.0.0.1:8000/accounts/token/", {
+    const response = await fetch(baseURL + "accounts/token/", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         username,
-        password
-      })
+        password,
+      }),
     });
     const data = await response.json();
 
@@ -49,68 +48,92 @@ export const AuthProvider = ({ children }) => {
       setUser(jwt_decode(data.access));
       localStorage.setItem("authTokens", JSON.stringify(data));
       history.push("/");
-      setToastState({'isOpen': true, 'type':'success', 'message': 'Zalogowano poprawnie!'});
+      setToastState({
+        isOpen: true,
+        type: "success",
+        message: "Zalogowano poprawnie!",
+      });
     } else {
       alert("Something went wrong!");
-      setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak!'});
+      setToastState({
+        isOpen: true,
+        type: "error",
+        message: "Coś poszło nie tak!",
+      });
     }
   };
 
-  const fetchUserData = async () =>{
+  const fetchUserData = async () => {
     const headers = { Authorization: `Bearer ${authTokens?.access}` };
-    await axios.get( 'users/' + user?.user_id, { headers })
-      .then(resp => {
-        if(resp.status !== 200) {
-          setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak przy pobieraniu twoich danych!'});
-        }
+    await axios.get("users/" + user?.user_id, { headers }).then((resp) => {
+      if (resp.status !== 200) {
+        setToastState({
+          isOpen: true,
+          type: "error",
+          message: "Coś poszło nie tak przy pobieraniu twoich danych!",
+        });
+      }
 
-        setUserData(resp.data);
-        localStorage.setItem("userData", resp.data);
-        console.log({resp});
-      });
-    }
+      setUserData(resp.data);
+      localStorage.setItem("userData", resp.data);
+      console.log({ resp });
+    });
+  };
 
   useEffect(() => {
     fetchUserData();
   }, [user]);
 
-    const fetchGroups = async (groups) => {
-      const headers = { Authorization: `Bearer ${authTokens?.access}` };
-      console.log({groups});
-        groups?.forEach(group => {
-          axios.get(group, {headers}).then(resp => {
-            setUserData({...userData, 'groups': resp.data.name}) 
-            // setUserData({...userData, 'groups': resp.data.name}) 
-          });
-          console.log({userData});
-          localStorage.setItem("userData", userData);
-        });  
-    }
+  const fetchGroups = async (groups) => {
+    const headers = { Authorization: `Bearer ${authTokens?.access}` };
+    console.log({ groups });
+    groups?.forEach((group) => {
+      axios.get(group, { headers }).then((resp) => {
+        setUserData({ ...userData, groups: resp.data.name });
+        // setUserData({...userData, 'groups': resp.data.name})
+      });
+      console.log({ userData });
+      localStorage.setItem("userData", userData);
+    });
+  };
 
-    useEffect(() => {
-      fetchGroups(userData?.groups);
-    }, [userData]);
-  
-  const registerUser = async (username, first_name, last_name, password, password2) => {
-    const response = await fetch("http://127.0.0.1:8000/accounts/register/", {
+  useEffect(() => {
+    fetchGroups(userData?.groups);
+  }, [userData]);
+
+  const registerUser = async (
+    username,
+    first_name,
+    last_name,
+    password,
+    password2
+  ) => {
+    const response = await fetch(baseURL + "accounts/register/", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         username,
         first_name,
         last_name,
         password,
-        password2
-      })
+        password2,
+      }),
     });
     if (response.status === 201) {
       history.push("/login");
-      setToastState({'isOpen': true, 'type':'success', 'message': 'Zarejestrowano poprawnie'});
+      setToastState({
+        isOpen: true,
+        type: "success",
+        message: "Zarejestrowano poprawnie",
+      });
     } else {
-      // alert("Something went wrong!");
-      setToastState({'isOpen': true, 'type':'error', 'message': 'Coś poszło nie tak! Sprawdź poprawność wprowadzonych danych'});
+      setToastState({
+        isOpen: true,
+        type: "error",
+        message: "Coś poszło nie tak! Sprawdź poprawność wprowadzonych danych",
+      });
     }
   };
 
@@ -120,7 +143,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("authTokens");
     history.push("/login");
 
-    setToastState({'isOpen': true, 'type':'success', 'message': 'Zostałeś wylogowany'})
+    setToastState({
+      isOpen: true,
+      type: "success",
+      message: "Zostałeś wylogowany",
+    });
   };
 
   const contextData = {
@@ -132,7 +159,7 @@ export const AuthProvider = ({ children }) => {
     registerUser,
     loginUser,
     logoutUser,
-    setUserData
+    setUserData,
   };
 
   useEffect(() => {
